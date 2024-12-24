@@ -17,11 +17,9 @@
 #if PLATFORM_WINDOWS
 // ReSharper disable once CppUnusedIncludeDirective
 #include "Windows/AllowWindowsPlatformTypes.h"
-#include "Windows/PreWindowsApi.h"
+#include "Windows/WindowsHWrapper.h"
 
 #include "Windows/WindowsPlatformMisc.h"
-
-#include "Windows/PostWindowsApi.h"
 // ReSharper disable once CppUnusedIncludeDirective
 #include "Windows/HideWindowsPlatformTypes.h"
 #endif

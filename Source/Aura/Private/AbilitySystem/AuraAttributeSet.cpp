@@ -13,6 +13,7 @@
 #include "Interaction/CombatInterface.h"
 #include "Interaction/PlayerInterface.h"
 #include "Player/AuraPlayerController.h"
+#include "GameplayEffectComponents/TargetTagsGameplayEffectComponent.h"
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
@@ -222,14 +223,29 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& Props)
 	Effect->DurationMagnitude = FScalableFloat(DebuffDuration);
 
 	const FGameplayTag DebuffTag = GameplayTags.DamageTypesToDebuffs[DamageType];
-	Effect->InheritableOwnedTagsContainer.AddTag(DebuffTag);
+
+	FInheritedTagContainer tagContainer = FInheritedTagContainer();
+	UTargetTagsGameplayEffectComponent& component = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
+	tagContainer.Added.AddTag(DebuffTag);
+	tagContainer.CombinedTags.AddTag(DebuffTag);
+	
+	//Effect->InheritableOwnedTagsContainer.AddTag(DebuffTag);
 	if (DebuffTag.MatchesTagExact(GameplayTags.Debuff_Stun))
 	{
-		Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_CursorTrace);
-		Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputHeld);
-		Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputPressed);
-		Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputReleased);
+		tagContainer.Added.AddTag(GameplayTags.Player_Block_CursorTrace);
+		tagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_CursorTrace);
+		tagContainer.Added.AddTag(GameplayTags.Player_Block_InputHeld);
+		tagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputHeld);
+		tagContainer.Added.AddTag(GameplayTags.Player_Block_InputPressed);
+		tagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputPressed);
+		tagContainer.Added.AddTag(GameplayTags.Player_Block_InputReleased);
+		tagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputReleased);
+		// Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_CursorTrace);
+		// Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputHeld);
+		// Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputPressed);
+		// Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputReleased);
 	}
+	component.SetAndApplyTargetTagChanges(tagContainer);
 
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
 	Effect->StackLimitCount = 1;
