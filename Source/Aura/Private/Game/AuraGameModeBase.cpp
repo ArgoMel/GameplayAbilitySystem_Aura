@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "Game/AuraGameModeBase.h"
 
 #include "EngineUtils.h"
@@ -14,7 +13,38 @@
 #include "UI/ViewModel/MVVM_LoadSlot.h"
 #include "GameFramework/Character.h"
 
-void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
+void AAuraGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+	Maps.Add(DefaultMapName, DefaultMap);
+}
+
+AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
+{
+	const UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
+	
+	TArray<AActor*> Actors;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), Actors);
+	if (Actors.Num() > 0)
+	{
+		AActor* SelectedActor = Actors[0];
+		for (AActor* Actor : Actors)
+		{
+			if (APlayerStart* PlayerStart = Cast<APlayerStart>(Actor))
+			{
+				if (PlayerStart->PlayerStartTag == AuraGameInstance->PlayerStartTag)
+				{
+					SelectedActor = PlayerStart;
+					break;
+				}
+			}
+		}
+		return SelectedActor;
+	}
+	return nullptr;
+}
+
+void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex) const
 {
 	if (UGameplayStatics::DoesSaveGameExist(LoadSlot->GetLoadSlotName(), SlotIndex))
 	{
@@ -33,7 +63,7 @@ void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex)
 
 ULoadScreenSaveGame* AAuraGameModeBase::GetSaveSlotData(const FString& SlotName, int32 SlotIndex) const
 {
-	USaveGame* SaveGameObject = nullptr;
+	USaveGame* SaveGameObject;
 	if (UGameplayStatics::DoesSaveGameExist(SlotName, SlotIndex))
 	{
 		SaveGameObject = UGameplayStatics::LoadGameFromSlot(SlotName, SlotIndex);
@@ -54,9 +84,9 @@ void AAuraGameModeBase::DeleteSlot(const FString& SlotName, int32 SlotIndex)
 	}
 }
 
-ULoadScreenSaveGame* AAuraGameModeBase::RetrieveInGameSaveData()
+ULoadScreenSaveGame* AAuraGameModeBase::RetrieveInGameSaveData() const
 {
-	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
+	const UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
 
 	const FString InGameLoadSlotName = AuraGameInstance->LoadSlotName;
 	const int32 InGameLoadSlotIndex = AuraGameInstance->LoadSlotIndex;
@@ -64,7 +94,7 @@ ULoadScreenSaveGame* AAuraGameModeBase::RetrieveInGameSaveData()
 	return GetSaveSlotData(InGameLoadSlotName, InGameLoadSlotIndex);
 }
 
-void AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame* SaveObject)
+void AAuraGameModeBase::SaveInGameProgressData(ULoadScreenSaveGame* SaveObject) const
 {
 	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
 
@@ -180,8 +210,8 @@ void AAuraGameModeBase::LoadWorldState(UWorld* World) const
 
 void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* Slot)
 {
-	const FString SlotName = Slot->GetLoadSlotName();
-	const int32 SlotIndex = Slot->SlotIndex;
+	//const FString SlotName = Slot->GetLoadSlotName();
+	//const int32 SlotIndex = Slot->SlotIndex;
 
 	UGameplayStatics::OpenLevelBySoftObjectPtr(Slot, Maps.FindChecked(Slot->GetMapName()));
 }
@@ -198,41 +228,13 @@ FString AAuraGameModeBase::GetMapNameFromMapAssetName(const FString& MapAssetNam
 	return FString();
 }
 
-AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
+void AAuraGameModeBase::PlayerDied(ACharacter* DeadCharacter) const
 {
-	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(GetGameInstance());
-	
-	TArray<AActor*> Actors;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), Actors);
-	if (Actors.Num() > 0)
+	const ULoadScreenSaveGame* SaveGame = RetrieveInGameSaveData();
+	if (!IsValid(SaveGame))
 	{
-		AActor* SelectedActor = Actors[0];
-		for (AActor* Actor : Actors)
-		{
-			if (APlayerStart* PlayerStart = Cast<APlayerStart>(Actor))
-			{
-				if (PlayerStart->PlayerStartTag == AuraGameInstance->PlayerStartTag)
-				{
-					SelectedActor = PlayerStart;
-					break;
-				}
-			}
-		}
-		return SelectedActor;
+		return;
 	}
-	return nullptr;
-}
-
-void AAuraGameModeBase::PlayerDied(ACharacter* DeadCharacter)
-{
-	ULoadScreenSaveGame* SaveGame = RetrieveInGameSaveData();
-	if (!IsValid(SaveGame)) return;
 
 	UGameplayStatics::OpenLevel(DeadCharacter, FName(SaveGame->MapAssetName));
-}
-
-void AAuraGameModeBase::BeginPlay()
-{
-	Super::BeginPlay();
-	Maps.Add(DefaultMapName, DefaultMap);
 }

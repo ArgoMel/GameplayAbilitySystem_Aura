@@ -28,12 +28,14 @@ AAuraCharacterBase::AAuraCharacterBase()
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetCapsuleComponent()->SetGenerateOverlapEvents(false);
+	
 	GetMesh()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);
-
+	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+	
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
-	Weapon->SetupAttachment(GetMesh(), FName("WeaponHandSocket"));
+	Weapon->SetupAttachment(GetMesh(), Aura_Socket::WeaponHandSocket);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	EffectAttachComponent = CreateDefaultSubobject<USceneComponent>("EffectAttachPoint");
@@ -44,8 +46,11 @@ AAuraCharacterBase::AAuraCharacterBase()
 	LifeSiphonNiagaraComponent->SetupAttachment(EffectAttachComponent);
 	ManaSiphonNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("ManaSiphonNiagaraComponent");
 	ManaSiphonNiagaraComponent->SetupAttachment(EffectAttachComponent);
+}
 
-	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+void AAuraCharacterBase::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 void AAuraCharacterBase::Tick(float DeltaTime)
@@ -127,12 +132,6 @@ void AAuraCharacterBase::OnRep_Stunned()
 
 void AAuraCharacterBase::OnRep_Burned()
 {
-}
-
-void AAuraCharacterBase::BeginPlay()
-{
-	Super::BeginPlay();
-	
 }
 
 FVector AAuraCharacterBase::GetCombatSocketLocation_Implementation(const FGameplayTag& MontageTag)
@@ -250,7 +249,7 @@ void AAuraCharacterBase::InitializeDefaultAttributes() const
 	ApplyEffectToSelf(DefaultVitalAttributes, 1.f);
 }
 
-void AAuraCharacterBase::AddCharacterAbilities()
+void AAuraCharacterBase::AddCharacterAbilities() const
 {
 	UAuraAbilitySystemComponent* AuraASC = CastChecked<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	if (!HasAuthority()) return;

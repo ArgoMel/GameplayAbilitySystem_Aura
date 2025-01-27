@@ -25,12 +25,15 @@ class AURA_API AAuraCharacterBase : public ACharacter, public IAbilitySystemInte
 
 public:
 	AAuraCharacterBase();
+protected:
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 	
+public:
+	/** Ability Interface */
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
 	/** Combat Interface */
 	virtual UAnimMontage* GetHitReactMontage_Implementation() override;	
@@ -52,13 +55,11 @@ public:
 	virtual FOnDamageSignature& GetOnDamageSignature() override;
 	/** end Combat Interface */
 
+public:
 	FOnASCRegistered OnAscRegistered;
 	FOnDeathSignature OnDeathDelegate;
 	FOnDamageSignature OnDamageDelegate;
-
-	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastHandleDeath(const FVector& DeathImpulse);
-
+	
 	UPROPERTY(EditAnywhere, Category = "Combat")
 	TArray<FTaggedMontage> AttackMontages;
 
@@ -71,16 +72,25 @@ public:
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	bool bIsBeingShocked = false;
 
-	UFUNCTION()
-	virtual void OnRep_Stunned();
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
+	float BaseWalkSpeed = 600.f;
 
-	UFUNCTION()
-	virtual void OnRep_Burned();
+	UPROPERTY()
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
-	void SetCharacterClass(ECharacterClass InClass) { CharacterClass = InClass; }
+	UPROPERTY()
+	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
+
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
+	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
+
 protected:
-	virtual void BeginPlay() override;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	TObjectPtr<USkeletalMeshComponent> Weapon;
 
@@ -98,36 +108,49 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bDead = false;
+	
+private:
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
+	UPROPERTY(EditAnywhere, Category = "Abilities")
+	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	TObjectPtr<UAnimMontage> HitReactMontage;
 
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> HaloOfProtectionNiagaraComponent;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> LifeSiphonNiagaraComponent;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UPassiveNiagaraComponent> ManaSiphonNiagaraComponent;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USceneComponent> EffectAttachComponent;
+	
+public:
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastHandleDeath(const FVector& DeathImpulse);
+	
+	UFUNCTION()
+	virtual void OnRep_Stunned();
+
+	UFUNCTION()
+	virtual void OnRep_Burned();
+
+	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	
+	void SetCharacterClass(ECharacterClass InClass) { CharacterClass = InClass; }
+	
+protected:
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
-	float BaseWalkSpeed = 600.f;
-
-	UPROPERTY()
-	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
-
-	UPROPERTY()
-	TObjectPtr<UAttributeSet> AttributeSet;
-
+	
 	virtual void InitAbilityActorInfo();
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
-	TSubclassOf<UGameplayEffect> DefaultPrimaryAttributes;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
-	TSubclassOf<UGameplayEffect> DefaultSecondaryAttributes;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Attributes")
-	TSubclassOf<UGameplayEffect> DefaultVitalAttributes;
 	
 	void ApplyEffectToSelf(TSubclassOf<UGameplayEffect> GameplayEffectClass, float Level) const;
 	virtual void InitializeDefaultAttributes() const;
 
-	void AddCharacterAbilities();
+	void AddCharacterAbilities() const;
 
 	/* Dissolve Effects */
-
 	void Dissolve();
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -149,7 +172,6 @@ protected:
 	USoundBase* DeathSound;
 
 	/* Minions */
-	
 	int32 MinionCount = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
@@ -160,27 +182,4 @@ protected:
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UDebuffNiagaraComponent> StunDebuffComponent;
-	
-private:
-
-	UPROPERTY(EditAnywhere, Category = "Abilities")
-	TArray<TSubclassOf<UGameplayAbility>> StartupAbilities;
-
-	UPROPERTY(EditAnywhere, Category = "Abilities")
-	TArray<TSubclassOf<UGameplayAbility>> StartupPassiveAbilities;
-
-	UPROPERTY(EditAnywhere, Category = "Combat")
-	TObjectPtr<UAnimMontage> HitReactMontage;
-
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UPassiveNiagaraComponent> HaloOfProtectionNiagaraComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UPassiveNiagaraComponent> LifeSiphonNiagaraComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UPassiveNiagaraComponent> ManaSiphonNiagaraComponent;
-
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USceneComponent> EffectAttachComponent;
 };

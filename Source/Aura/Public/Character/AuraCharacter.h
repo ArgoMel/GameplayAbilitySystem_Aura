@@ -10,18 +10,22 @@
 class UNiagaraComponent;
 class UCameraComponent;
 class USpringArmComponent;
-/**
- * 
- */
+
 UCLASS()
 class AURA_API AAuraCharacter : public AAuraCharacterBase, public IPlayerInterface
 {
 	GENERATED_BODY()
 public:
 	AAuraCharacter();
+protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
+	virtual void OnRep_Stunned() override;
+	virtual void OnRep_Burned() override;
+	virtual void InitAbilityActorInfo() override;
+	
+public:
 	/** Player Interface */
 	virtual void AddToXP_Implementation(int32 InXP) override;
 	virtual void LevelUp_Implementation() override;
@@ -44,6 +48,7 @@ public:
 	virtual void Die(const FVector& DeathImpulse) override;
 	/** end Combat Interface */
 
+public:
 	UPROPERTY(EditDefaultsOnly)
 	float DeathTime = 5.f;
 
@@ -52,19 +57,16 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
 
-	virtual void OnRep_Stunned() override;
-	virtual void OnRep_Burned() override;
-
-	void LoadProgress();
 private:
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USpringArmComponent> CameraBoom;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCameraComponent> TopDownCameraComponent;
 
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<USpringArmComponent> CameraBoom;
+public:
+	void LoadProgress() const;
 	
-	virtual void InitAbilityActorInfo() override;
-
+private:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUpParticles() const;
 };

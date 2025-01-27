@@ -12,17 +12,22 @@
 class UWidgetComponent;
 class UBehaviorTree;
 class AAuraAIController;
-/**
- * 
- */
+
 UCLASS()
 class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface, public IHighlightInterface
 {
 	GENERATED_BODY()
 public:
 	AAuraEnemy();
+protected:
 	virtual void PossessedBy(AController* NewController) override;
+	virtual void BeginPlay() override;
 
+	virtual void InitAbilityActorInfo() override;
+	virtual void InitializeDefaultAttributes() const override;
+	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
+	
+public:
 	/** Highlight Interface */
 	virtual void HighlightActor_Implementation() override;
 	virtual void UnHighlightActor_Implementation() override;
@@ -36,6 +41,7 @@ public:
 	virtual AActor* GetCombatTarget_Implementation() const override;
 	/** end Combat Interface */
 
+public:
 	UPROPERTY(BlueprintReadWrite, Category = "Combat")
 	TObjectPtr<AActor> CombatTarget;
 
@@ -44,21 +50,12 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnAttributeChangedSignature OnMaxHealthChanged;
-	
-	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Combat")
 	bool bHitReacting = false;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat")
 	float LifeSpan = 5.f;
-
-	void SetLevel(int32 InLevel) { Level = InLevel; }
-protected:
-	virtual void BeginPlay() override;
-	virtual void InitAbilityActorInfo() override;
-	virtual void InitializeDefaultAttributes() const override;
-	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character Class Defaults")
 	int32 Level = 1;
@@ -71,7 +68,12 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<AAuraAIController> AuraAIController;
-
+	
+public:
+	void HitReactTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void SpawnLoot();
+	
+	void SetLevel(int32 InLevel) { Level = InLevel; }
 };
