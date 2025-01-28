@@ -15,19 +15,20 @@ class ULevelUpInfo;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /*StatValue*/)
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnLevelChanged, int32 /*StatValue*/, bool /*bLevelUp*/)
 
-/**
- * 
- */
 UCLASS()
 class AURA_API AAuraPlayerState : public APlayerState, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 public:
 	AAuraPlayerState();
+protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
-	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
 
+public:
+	//IAbilitySystemInterface
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+
+public:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<ULevelUpInfo> LevelUpInfo;
 
@@ -35,24 +36,8 @@ public:
 	FOnLevelChanged OnLevelChangedDelegate;
 	FOnPlayerStatChanged OnAttributePointsChangedDelegate;
 	FOnPlayerStatChanged OnSpellPointsChangedDelegate;
-
-	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
-	FORCEINLINE int32 GetXP() const { return XP; }
-	FORCEINLINE int32 GetAttributePoints() const { return AttributePoints; }
-	FORCEINLINE int32 GetSpellPoints() const { return SpellPoints; }
-
-	void AddToXP(int32 InXP);
-	void AddToLevel(int32 InLevel);
-	void AddToAttributePoints(int32 InPoints);
-	void AddToSpellPoints(int32 InPoints);
-	
-	void SetXP(int32 InXP);
-	void SetLevel(int32 InLevel);
-	void SetAttributePoints(int32 InPoints);
-	void SetSpellPoints(int32 InPoints);
 	
 protected:
-	
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 
@@ -60,7 +45,6 @@ protected:
 	TObjectPtr<UAttributeSet> AttributeSet;
 
 private:
-
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_Level)
 	int32 Level = 1;
 
@@ -73,6 +57,24 @@ private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_SpellPoints)
 	int32 SpellPoints = 0;
 	
+public:
+	UAttributeSet* GetAttributeSet() const { return AttributeSet; }
+	FORCEINLINE int32 GetPlayerLevel() const { return Level; }
+	FORCEINLINE int32 GetXP() const { return XP; }
+	FORCEINLINE int32 GetAttributePoints() const { return AttributePoints; }
+	FORCEINLINE int32 GetSpellPoints() const { return SpellPoints; }
+	
+	void AddToXP(int32 InXP);
+	void AddToLevel(int32 InLevel);
+	void AddToAttributePoints(int32 InPoints);
+	void AddToSpellPoints(int32 InPoints);
+	
+	void SetXP(int32 InXP);
+	void SetLevel(int32 InLevel);
+	void SetAttributePoints(int32 InPoints);
+	void SetSpellPoints(int32 InPoints);
+
+private:	
 	UFUNCTION()
 	void OnRep_Level(int32 OldLevel);
 

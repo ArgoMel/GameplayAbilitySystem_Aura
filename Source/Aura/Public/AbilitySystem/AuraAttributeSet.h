@@ -52,27 +52,22 @@ struct FEffectProperties
 template<class T>
 using TStaticFuncPtr = typename TBaseStaticDelegateInstance<T, FDefaultDelegateUserPolicy>::FFuncPtr;
 
-/**
- * 
- */
 UCLASS()
 class AURA_API UAuraAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 public:
 	UAuraAttributeSet();
+protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
-
+	
+public:
 	TMap<FGameplayTag, TStaticFuncPtr<FGameplayAttribute()>> TagsToAttributes;
 	
-	/*
-	 * Primary Attributes
-	 */
-
+	/** Primary Attributes */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Strength, Category = "Primary Attributes")
 	FGameplayAttributeData Strength;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Strength);
@@ -89,10 +84,7 @@ public:
 	FGameplayAttributeData Vigor;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Vigor);
 
-	/*
-	 * Secondary Attributes
-	 */
-
+	/** Secondary Attributes */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Armor, Category = "Secondary Attributes")
 	FGameplayAttributeData Armor;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Armor);
@@ -133,10 +125,7 @@ public:
 	FGameplayAttributeData MaxMana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, MaxMana);
 
-	/*
-	 * Resistance Attributes
-	 */
-
+	/** Resistance Attributes */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_FireResistance, Category = "Resistance Attributes")
 	FGameplayAttributeData FireResistance;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, FireResistance);
@@ -153,10 +142,7 @@ public:
 	FGameplayAttributeData PhysicalResistance;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, PhysicalResistance);
 
-	/*
-	 * Vital Attributes
-	 */
-
+	/** Vital Attributes */
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Health, Category = "Vital Attributes")
 	FGameplayAttributeData Health;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Health);
@@ -164,12 +150,8 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Mana, Category = "Vital Attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, Mana);
-
-
-	/*
-	 * Meta Attributes
-	 */
-
+	
+	/** Meta Attributes */
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
 	FGameplayAttributeData IncomingDamage;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingDamage);
@@ -177,7 +159,12 @@ public:
 	UPROPERTY(BlueprintReadOnly, Category = "Meta Attributes")
 	FGameplayAttributeData IncomingXP;
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet, IncomingXP);
-
+	
+private:
+	bool bTopOffHealth = false;
+	bool bTopOffMana = false;
+	
+public:
 	UFUNCTION()
 	void OnRep_Health(const FGameplayAttributeData& OldHealth) const;
 
@@ -241,11 +228,9 @@ public:
 private:
 	void HandleIncomingDamage(const FEffectProperties& Props);
 	void HandleIncomingXP(const FEffectProperties& Props);
-	void Debuff(const FEffectProperties& Props);
+	void Debuff(const FEffectProperties& Props) const;
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const;
 	void ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const;
-	void SendXPEvent(const FEffectProperties& Props);
-	bool bTopOffHealth = false;
-	bool bTopOffMana = false;
+	void SendXPEvent(const FEffectProperties& Props) const;
 };
 

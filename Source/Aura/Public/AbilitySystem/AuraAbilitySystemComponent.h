@@ -7,6 +7,7 @@
 #include "AuraAbilitySystemComponent.generated.h"
 
 class ULoadScreenSaveGame;
+
 DECLARE_MULTICAST_DELEGATE_OneParam(FEffectAssetTags, const FGameplayTagContainer& /*AssetTags*/);
 DECLARE_MULTICAST_DELEGATE(FAbilitiesGiven);
 DECLARE_DELEGATE_OneParam(FForEachAbility, const FGameplayAbilitySpec&);
@@ -15,16 +16,14 @@ DECLARE_MULTICAST_DELEGATE_FourParams(FAbilityEquipped, const FGameplayTag& /*Ab
 DECLARE_MULTICAST_DELEGATE_OneParam(FDeactivatePassiveAbility, const FGameplayTag& /*AbilityTag*/);
 DECLARE_MULTICAST_DELEGATE_TwoParams(FActivatePassiveEffect, const FGameplayTag& /*AbilityTag*/, bool /*bActivate*/);
 
-/**
- * 
- */
 UCLASS()
 class AURA_API UAuraAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
+protected:
+	virtual void OnRep_ActivateAbilities() override;
+	
 public:
-	void AbilityActorInfoSet();
-
 	FEffectAssetTags EffectAssetTags;
 	FAbilitiesGiven AbilitiesGivenDelegate;
 	FAbilityStatusChanged AbilityStatusChanged;
@@ -32,11 +31,15 @@ public:
 	FDeactivatePassiveAbility DeactivatePassiveAbility;
 	FActivatePassiveEffect ActivatePassiveEffect;
 
+	bool bStartupAbilitiesGiven = false;
+	
+public:
+	void AbilityActorInfoSet();
+	
 	void AddCharacterAbilitiesFromSaveData(ULoadScreenSaveGame* SaveData);
 	void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupAbilities);
 	void AddCharacterPassiveAbilities(const TArray<TSubclassOf<UGameplayAbility>>& StartupPassiveAbilities);
-	bool bStartupAbilitiesGiven = false;
-
+	
 	void AbilityInputTagPressed(const FGameplayTag& InputTag);
 	void AbilityInputTagHeld(const FGameplayTag& InputTag);
 	void AbilityInputTagReleased(const FGameplayTag& InputTag);
@@ -80,10 +83,8 @@ public:
 	static void ClearSlot(FGameplayAbilitySpec* Spec);
 	void ClearAbilitiesOfSlot(const FGameplayTag& Slot);
 	static bool AbilityHasSlot(FGameplayAbilitySpec* Spec, const FGameplayTag& Slot);
+
 protected:
-
-	virtual void OnRep_ActivateAbilities() override;
-
 	UFUNCTION(Client, Reliable)
 	void ClientEffectApplied(UAbilitySystemComponent* AbilitySystemComponent, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle ActiveEffectHandle);
 

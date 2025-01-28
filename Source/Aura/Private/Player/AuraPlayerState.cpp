@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "Player/AuraPlayerState.h"
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
@@ -9,13 +8,13 @@
 
 AAuraPlayerState::AAuraPlayerState()
 {
+	SetNetUpdateFrequency(100.f);
+	
 	AbilitySystemComponent = CreateDefaultSubobject<UAuraAbilitySystemComponent>("AbilitySystemComponent");
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 
 	AttributeSet = CreateDefaultSubobject<UAuraAttributeSet>("AttributeSet");
-	
-	SetNetUpdateFrequency(100.f);
 }
 
 void AAuraPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -69,21 +68,25 @@ void AAuraPlayerState::SetSpellPoints(int32 InPoints)
 	OnSpellPointsChangedDelegate.Broadcast(SpellPoints);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void AAuraPlayerState::OnRep_Level(int32 OldLevel)
 {
 	OnLevelChangedDelegate.Broadcast(Level, true);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void AAuraPlayerState::OnRep_XP(int32 OldXP)
 {
 	OnXPChangedDelegate.Broadcast(XP);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void AAuraPlayerState::OnRep_AttributePoints(int32 OldAttributePoints)
 {
 	OnAttributePointsChangedDelegate.Broadcast(AttributePoints);
 }
 
+// ReSharper disable once CppMemberFunctionMayBeConst
 void AAuraPlayerState::OnRep_SpellPoints(int32 OldSpellPoints)
 {
 	OnSpellPointsChangedDelegate.Broadcast(SpellPoints);
