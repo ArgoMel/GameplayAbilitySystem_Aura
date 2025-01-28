@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AuraAbilityTypes.h"
 #include "AuraGameplayTags.h"
+#include "Aura/Aura.h"
 #include "Game/AuraGameModeBase.h"
 #include "Game/LoadScreenSaveGame.h"
 #include "Interaction/CombatInterface.h"
@@ -504,8 +505,8 @@ void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const TArray
 
 bool UAuraAbilitySystemLibrary::IsNotFriend(AActor* FirstActor, AActor* SecondActor)
 {
-	const bool bBothArePlayers = FirstActor->ActorHasTag(FName("Player")) && SecondActor->ActorHasTag(FName("Player"));
-	const bool bBothAreEnemies = FirstActor->ActorHasTag(FName("Enemy")) && SecondActor->ActorHasTag(FName("Enemy"));
+	const bool bBothArePlayers = FirstActor->ActorHasTag(Aura_Tag::Player) && SecondActor->ActorHasTag(Aura_Tag::Player);
+	const bool bBothAreEnemies = FirstActor->ActorHasTag(Aura_Tag::Enemy) && SecondActor->ActorHasTag(Aura_Tag::Enemy);
 	const bool bFriends = bBothArePlayers || bBothAreEnemies;
 	return !bFriends;
 }

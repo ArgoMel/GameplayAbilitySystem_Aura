@@ -151,7 +151,7 @@ FGameplayTag UAuraAbilitySystemComponent::GetAbilityTagFromSpec(const FGameplayA
 {
 	if (AbilitySpec.Ability)
 	{
-		for (FGameplayTag Tag : AbilitySpec.Ability.Get()->AbilityTags)
+		for (FGameplayTag Tag : AbilitySpec.Ability.Get()->GetAssetTags())
 		{
 			if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities"))))
 			{
@@ -265,7 +265,7 @@ FGameplayAbilitySpec* UAuraAbilitySystemComponent::GetSpecFromAbilityTag(const F
 	FScopedAbilityListLock ActiveScopeLoc(*this);
 	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
 	{
-		for (FGameplayTag Tag : AbilitySpec.Ability.Get()->AbilityTags)
+		for (FGameplayTag Tag : AbilitySpec.Ability.Get()->GetAssetTags())
 		{
 			if (Tag.MatchesTag(AbilityTag))
 			{

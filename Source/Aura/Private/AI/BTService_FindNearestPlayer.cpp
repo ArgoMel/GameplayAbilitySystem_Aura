@@ -3,6 +3,7 @@
 
 #include "AI/BTService_FindNearestPlayer.h"
 #include "AIController.h"
+#include "Aura/Aura.h"
 #include "BehaviorTree/BTFunctionLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -10,9 +11,9 @@ void UBTService_FindNearestPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, u
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
-	APawn* OwningPawn = AIOwner->GetPawn();
+	const APawn* OwningPawn = AIOwner->GetPawn();
 
-	const FName TargetTag = OwningPawn->ActorHasTag(FName("Player")) ? FName("Enemy") : FName("Player");
+	const FName TargetTag = OwningPawn->ActorHasTag(Aura_Tag::Player) ? Aura_Tag::Enemy : Aura_Tag::Player;
 
 	TArray<AActor*> ActorsWithTag;
 	UGameplayStatics::GetAllActorsWithTag(OwningPawn, TargetTag, ActorsWithTag);

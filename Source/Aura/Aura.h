@@ -16,3 +16,9 @@ namespace Aura_Socket
 {
 	const FName WeaponHandSocket=FName("WeaponHandSocket");
 }
+
+namespace Aura_Tag
+{
+	const FName Player=FName("Player");
+	const FName Enemy=FName("Enemy");
+}
