@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "UI/WidgetController/OverlayWidgetController.h"
 
 #include "AuraGameplayTags.h"
@@ -12,12 +11,10 @@
 
 void UOverlayWidgetController::BroadcastInitialValues()
 {
-
 	OnHealthChanged.Broadcast(GetAuraAS()->GetHealth());
 	OnMaxHealthChanged.Broadcast(GetAuraAS()->GetMaxHealth());
 	OnManaChanged.Broadcast(GetAuraAS()->GetMana());
 	OnMaxManaChanged.Broadcast(GetAuraAS()->GetMaxMana());
-	
 }
 
 void UOverlayWidgetController::BindCallbacksToDependencies()
@@ -93,7 +90,7 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 void UOverlayWidgetController::OnXPChanged(int32 NewXP)
 {
 	const ULevelUpInfo* LevelUpInfo = GetAuraPS()->LevelUpInfo;
-	checkf(LevelUpInfo, TEXT("Unabled to find LevelUpInfo. Please fill out AuraPlayerState Blueprint"));
+	checkf(LevelUpInfo, TEXT("Unable to find LevelUpInfo. Please fill out AuraPlayerState Blueprint"));
 
 	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);
 	const int32 MaxLevel = LevelUpInfo->LevelUpInformation.Num();

@@ -6,6 +6,10 @@
 #include "UI/WidgetController/AuraWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
+class UAuraUserWidget;
+class UAbilityInfo;
+class UAuraAbilitySystemComponent;
+
 struct FAuraAbilityInfo;
 USTRUCT(BlueprintType)
 struct FUIWidgetRow : public FTableRowBase
@@ -19,23 +23,16 @@ struct FUIWidgetRow : public FTableRowBase
 	FText Message = FText();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<class UAuraUserWidget> MessageWidget;
+	TSubclassOf<UAuraUserWidget> MessageWidget;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	UTexture2D* Image = nullptr;
 };
 
-class UAuraUserWidget;
-class UAbilityInfo;
-class UAuraAbilitySystemComponent;
-
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnLevelChangedSignature, int32, NewLevel, bool, bLevelUp);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FMessageWidgetRowSignature, FUIWidgetRow, Row);
 
-/**
- * 
- */
 UCLASS(BlueprintType, Blueprintable)
 class AURA_API UOverlayWidgetController : public UAuraWidgetController
 {
@@ -43,7 +40,8 @@ class AURA_API UOverlayWidgetController : public UAuraWidgetController
 public:
 	virtual void BroadcastInitialValues() override;
 	virtual void BindCallbacksToDependencies() override;
-
+	
+public:
 	UPROPERTY(BlueprintAssignable, Category="GAS|Attributes")
 	FOnAttributeChangedSignature OnHealthChanged;
 
@@ -66,10 +64,10 @@ public:
 	FOnLevelChangedSignature OnPlayerLevelChangedDelegate;
 
 protected:
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widget Data")
 	TObjectPtr<UDataTable> MessageWidgetDataTable;
-
+	
+protected:
 	template<typename T>
 	T* GetDataTableRowByTag(UDataTable* DataTable, const FGameplayTag& Tag);
 
