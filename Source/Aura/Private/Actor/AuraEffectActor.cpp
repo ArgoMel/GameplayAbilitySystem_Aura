@@ -96,7 +96,11 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 
 void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 {
-	if (TargetActor->ActorHasTag(Aura_Tag::Enemy) && !bApplyEffectsToEnemies) return;
+	if (TargetActor->ActorHasTag(Aura_Tag::Enemy)
+		&& !bApplyEffectsToEnemies)
+	{
+		return;
+	}
 	
 	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnOverlap)
 	{
@@ -114,7 +118,11 @@ void AAuraEffectActor::OnOverlap(AActor* TargetActor)
 
 void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 {
-	if (TargetActor->ActorHasTag(Aura_Tag::Enemy) && !bApplyEffectsToEnemies) return;
+	if (TargetActor->ActorHasTag(Aura_Tag::Enemy)
+		&& !bApplyEffectsToEnemies)
+	{
+		return;
+	}
 	
 	if (InstantEffectApplicationPolicy == EEffectApplicationPolicy::ApplyOnEndOverlap)
 	{
@@ -131,8 +139,11 @@ void AAuraEffectActor::OnEndOverlap(AActor* TargetActor)
 	if (InfiniteEffectRemovalPolicy == EEffectRemovalPolicy::RemoveOnEndOverlap)
 	{
 		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-		if (!IsValid(TargetASC)) return;
-
+		if (!IsValid(TargetASC))
+		{
+			return;
+		}
+		
 		TArray<FActiveGameplayEffectHandle> HandlesToRemove;
 		for (TTuple<FActiveGameplayEffectHandle, UAbilitySystemComponent*> HandlePair : ActiveEffectHandles)
 		{
