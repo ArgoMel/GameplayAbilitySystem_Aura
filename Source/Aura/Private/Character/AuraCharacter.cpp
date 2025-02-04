@@ -227,7 +227,7 @@ void AAuraCharacter::HideMagicCircle_Implementation()
 
 void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 {
-	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
 	if (AuraGameMode)
 	{
 		ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
@@ -307,8 +307,10 @@ void AAuraCharacter::LoadProgress() const
 	if (AuraGameMode)
 	{
 		ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
-		if (SaveData == nullptr) return;
-
+		if (SaveData == nullptr)
+		{
+			return;
+		}
 		if (SaveData->bFirstTimeLoadIn)
 		{
 			InitializeDefaultAttributes();

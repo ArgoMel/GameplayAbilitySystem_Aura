@@ -34,22 +34,15 @@ struct FTaggedMontage
 	USoundBase* ImpactSound = nullptr;
 };
 
-// This class does not need to be modified.
 UINTERFACE(MinimalAPI, BlueprintType)
 class UCombatInterface : public UInterface
 {
 	GENERATED_BODY()
 };
 
-
-/**
- * 
- */
 class AURA_API ICombatInterface
 {
 	GENERATED_BODY()
-
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	UFUNCTION(BlueprintNativeEvent)
 	int32 GetPlayerLevel();
@@ -86,7 +79,7 @@ public:
 	int32 GetMinionCount();
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-	void IncremenetMinionCount(int32 Amount);
+	void IncrementMinionCount(int32 Amount);
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	ECharacterClass GetCharacterClass();
