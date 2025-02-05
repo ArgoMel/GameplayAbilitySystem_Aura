@@ -20,7 +20,7 @@ UAuraAttributeSet::UAuraAttributeSet()
 	InitHealth(10.f);
 	InitMaxHealth(100.f);
 	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
-
+//Argo 만들어놓은 맵을 반복문 돌리고 게임플레이테그에 이름을 받아오고 ㅇㅇㅇ.ㅇㅇㅇ.Strength 에서 뒤에만 짜르고 메크로 사용해서 함수 바인딩 해볼 가치 있어보임
 	/* Primary Attributes */
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Strength, GetStrengthAttribute);
 	TagsToAttributes.Add(GameplayTags.Attributes_Primary_Intelligence, GetIntelligenceAttribute);
