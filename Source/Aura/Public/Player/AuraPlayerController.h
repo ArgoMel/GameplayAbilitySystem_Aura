@@ -90,7 +90,7 @@ public:
 	void ShowMagicCircle(UMaterialInterface* DecalMaterial = nullptr);
 
 	UFUNCTION(BlueprintCallable)
-	void HideMagicCircle();
+	void HideMagicCircle() const;
 
 private:
 	void ShiftPressed() { bShiftKeyDown = true; };
