@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "Character/AuraCharacter.h"
 
 #include "AbilitySystemComponent.h"
@@ -55,7 +54,7 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	// Init ability actor info for the Server
-	InitAbilityActorInfo();
+	//InitAbilityActorInfo();
 	LoadProgress();
 
 	if (const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
@@ -69,7 +68,16 @@ void AAuraCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 
 	// Init ability actor info for the Client
-	InitAbilityActorInfo();
+	//InitAbilityActorInfo();
+}
+
+void AAuraCharacter::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState)
+{
+	Super::OnPlayerStateChanged(NewPlayerState, OldPlayerState);
+	if (NewPlayerState)
+	{
+		InitAbilityActorInfo();
+	}
 }
 
 void AAuraCharacter::OnRep_Stunned()
@@ -309,6 +317,8 @@ void AAuraCharacter::LoadProgress() const
 		ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
 		if (SaveData == nullptr)
 		{
+			InitializeDefaultAttributes();
+			AddCharacterAbilities();
 			return;
 		}
 		if (SaveData->bFirstTimeLoadIn)

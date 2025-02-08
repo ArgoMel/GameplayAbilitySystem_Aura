@@ -17,8 +17,6 @@
 
 UAuraAttributeSet::UAuraAttributeSet()
 {
-	InitHealth(10.f);
-	InitMaxHealth(100.f);
 	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
 	
 	/* Primary Attributes */

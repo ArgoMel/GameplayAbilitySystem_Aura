@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "Character/AuraCharacterBase.h"
 #include "AbilitySystemComponent.h"
 #include "AuraGameplayTags.h"

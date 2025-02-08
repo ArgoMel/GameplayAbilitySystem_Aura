@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "Character/AuraEnemy.h"
 
 #include "AbilitySystem/AuraAbilitySystemComponent.h"

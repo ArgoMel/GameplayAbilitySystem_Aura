@@ -110,16 +110,16 @@ public:
 	void SetRadialDamageOrigin(const FVector& InRadialDamageOrigin) { RadialDamageOrigin = InRadialDamageOrigin; }
 	
 	/** Returns the actual struct used for serialization, subclasses must override this! */
-	virtual UScriptStruct* GetScriptStruct() const
+	virtual UScriptStruct* GetScriptStruct() const override
 	{
 		return FGameplayEffectContext::StaticStruct();
 	}
 
 	/** Creates a copy of this context, used to duplicate for later modifications */
-	virtual FGameplayEffectContext* Duplicate() const
+	virtual FGameplayEffectContext* Duplicate() const override
 	{
 		FGameplayEffectContext* NewContext = new FGameplayEffectContext();
-		*NewContext = *this;
+		*NewContext = static_cast<FGameplayEffectContext>(*this);
 		if (GetHitResult())
 		{
 			// Does a deep copy of the hit result
@@ -129,7 +129,7 @@ public:
 	}
 
 	/** Custom serialization, subclasses must override this */
-	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess);
+	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;
 	
 protected:
 

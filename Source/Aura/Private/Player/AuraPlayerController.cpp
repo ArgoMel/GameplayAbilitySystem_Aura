@@ -99,6 +99,7 @@ void AAuraPlayerController::HideMagicCircle() const
 
 void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 {
+	bAutoRunning = false;
 	if (GetASC() &&
 		GetASC()->HasMatchingGameplayTag(FAuraGameplayTags::Get().Player_Block_InputPressed))
 	{
