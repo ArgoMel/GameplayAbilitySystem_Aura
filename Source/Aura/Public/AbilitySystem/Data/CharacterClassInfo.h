@@ -7,7 +7,6 @@
 #include "ScalableFloat.h"
 #include "CharacterClassInfo.generated.h"
 
-
 class UGameplayEffect;
 class UGameplayAbility;
 
@@ -34,9 +33,6 @@ struct FCharacterClassDefaultInfo
 	FScalableFloat XPReward = FScalableFloat();
 };
 
-/**
- * 
- */
 UCLASS()
 class AURA_API UCharacterClassInfo : public UDataAsset
 {
