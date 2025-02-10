@@ -39,10 +39,13 @@ AAuraCharacterBase::AAuraCharacterBase()
 
 	EffectAttachComponent = CreateDefaultSubobject<USceneComponent>("EffectAttachPoint");
 	EffectAttachComponent->SetupAttachment(GetRootComponent());
+	
 	HaloOfProtectionNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("HaloOfProtectionComponent");
 	HaloOfProtectionNiagaraComponent->SetupAttachment(EffectAttachComponent);
+	
 	LifeSiphonNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("LifeSiphonNiagaraComponent");
 	LifeSiphonNiagaraComponent->SetupAttachment(EffectAttachComponent);
+	
 	ManaSiphonNiagaraComponent = CreateDefaultSubobject<UPassiveNiagaraComponent>("ManaSiphonNiagaraComponent");
 	ManaSiphonNiagaraComponent->SetupAttachment(EffectAttachComponent);
 }

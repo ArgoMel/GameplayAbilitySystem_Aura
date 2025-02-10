@@ -1,13 +1,12 @@
 // Copyright Druid Mechanics
 
-
 #include "AbilitySystem/Data/LootTiers.h"
 
 TArray<FLootItem> ULootTiers::GetLootItems()
 {
 	TArray<FLootItem> ReturnItems;
 
-	for (FLootItem& Item : LootItems)
+	for (const FLootItem& Item : LootItems)
 	{
 		for (int32 i = 0; i < Item.MaxNumberToSpawn; ++i)
 		{

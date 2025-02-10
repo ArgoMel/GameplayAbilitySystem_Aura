@@ -11,6 +11,7 @@
 AAuraEffectActor::AAuraEffectActor()
 {
 	PrimaryActorTick.bCanEverTick = false;
+	bReplicates=true;
 
 	SetRootComponent(CreateDefaultSubobject<USceneComponent>("SceneRoot"));
 }

@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "AbilitySystem/AuraAttributeSet.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
@@ -181,9 +180,8 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 	{
 		const float NewHealth = GetHealth() - LocalIncomingDamage;
 		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-
-		const bool bFatal = NewHealth <= 0.f;
-		if (bFatal)
+		
+		if (NewHealth <= 0.f)
 		{
 			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
 			if (CombatInterface)
@@ -192,7 +190,6 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 				CombatInterface->Die(UAuraAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle));
 			}
 			SendXPEvent(Props);
-			
 		}
 		else
 		{
@@ -341,7 +338,10 @@ void UAuraAttributeSet::SendXPEvent(const FEffectProperties& Props) const
 
 void UAuraAttributeSet::ShowFloatingText(const FEffectProperties& Props, float Damage, bool bBlockedHit, bool bCriticalHit) const
 {
-	if (!IsValid(Props.SourceCharacter) || !IsValid(Props.TargetCharacter)) return;
+	if (!IsValid(Props.SourceCharacter) || !IsValid(Props.TargetCharacter))
+	{
+		return;
+	}
 	if (Props.SourceCharacter != Props.TargetCharacter)
 	{
 		if(AAuraPlayerController* PC = Cast<AAuraPlayerController>(Props.SourceCharacter->Controller))

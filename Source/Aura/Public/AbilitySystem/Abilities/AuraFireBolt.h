@@ -6,9 +6,6 @@
 #include "AbilitySystem/Abilities/AuraProjectileSpell.h"
 #include "AuraFireBolt.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class AURA_API UAuraFireBolt : public UAuraProjectileSpell
 {
@@ -21,7 +18,6 @@ public:
 	void SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTarget);
 
 protected:
-
 	UPROPERTY(EditDefaultsOnly, Category = "FireBolt")
 	float ProjectileSpread = 90.f;
 

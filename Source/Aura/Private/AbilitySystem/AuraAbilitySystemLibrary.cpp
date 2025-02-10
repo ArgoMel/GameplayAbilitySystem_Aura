@@ -130,7 +130,10 @@ void UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(const UO
 void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContextObject, UAbilitySystemComponent* ASC, ECharacterClass CharacterClass)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
-	if (CharacterClassInfo == nullptr) return;
+	if (CharacterClassInfo == nullptr)
+	{
+		return;
+	}
 	for (TSubclassOf<UGameplayAbility> AbilityClass : CharacterClassInfo->CommonAbilities)
 	{
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(AbilityClass, 1);
@@ -150,8 +153,10 @@ void UAuraAbilitySystemLibrary::GiveStartupAbilities(const UObject* WorldContext
 int32 UAuraAbilitySystemLibrary::GetXPRewardForClassAndLevel(const UObject* WorldContextObject, ECharacterClass CharacterClass, int32 CharacterLevel)
 {
 	UCharacterClassInfo* CharacterClassInfo = GetCharacterClassInfo(WorldContextObject);
-	if (CharacterClassInfo == nullptr) return 0;
-
+	if (CharacterClassInfo == nullptr)
+	{
+		return 0;
+	}
 	const FCharacterClassDefaultInfo& Info = CharacterClassInfo->GetClassDefaultInfo(CharacterClass);
 	const float XPReward = Info.XPReward.GetValueAtLevel(CharacterLevel);
 
@@ -192,8 +197,7 @@ void UAuraAbilitySystemLibrary::SetDeathImpulseDirection(FDamageEffectParams& Da
 	}
 }
 
-void UAuraAbilitySystemLibrary::SetTargetEffectParamsASC(FDamageEffectParams& DamageEffectParams,
-	UAbilitySystemComponent* InASC)
+void UAuraAbilitySystemLibrary::SetTargetEffectParamsASC(FDamageEffectParams& DamageEffectParams, UAbilitySystemComponent* InASC)
 {
 	DamageEffectParams.TargetAbilitySystemComponent = InASC;
 }
@@ -211,14 +215,20 @@ UCharacterClassInfo* UAuraAbilitySystemLibrary::GetCharacterClassInfo(const UObj
 UAbilityInfo* UAuraAbilitySystemLibrary::GetAbilityInfo(const UObject* WorldContextObject)
 {
 	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (AuraGameMode == nullptr) return nullptr;
+	if (AuraGameMode == nullptr)
+	{
+		return nullptr;
+	}
 	return AuraGameMode->AbilityInfo;
 }
 
 ULootTiers* UAuraAbilitySystemLibrary::GetLootTiers(const UObject* WorldContextObject)
 {
 	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(WorldContextObject));
-	if (AuraGameMode == nullptr) return nullptr;
+	if (AuraGameMode == nullptr)
+	{
+		return nullptr;
+	}
 	return AuraGameMode->LootTiers;
 }
 
