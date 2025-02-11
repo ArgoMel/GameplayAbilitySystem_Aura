@@ -1,8 +1,15 @@
 // Copyright Druid Mechanics
 
-
 #include "AuraGameplayTags.h"
 #include "GameplayTagsManager.h"
+
+#define DEFINE_ATTRIBUTES(Prop,Name, Desc) \
+{\
+FAuraAttributeInfo tempInfo=FAuraAttributeInfo(TEXT(#Name),TEXT(Desc));\
+tempInfo.AttributeTag= UGameplayTagsManager::Get().AddNativeGameplayTag(FName(FString::Printf(TEXT("Attributes.%s.%s"),TEXT(#Prop),TEXT(#Name))),Desc);\
+GameplayTags.Attributes_##Prop##_##Name=tempInfo.AttributeTag;\
+GameplayTags.AttributeTags.Add(tempInfo);\
+}
 
 FAuraGameplayTags FAuraGameplayTags::GameplayTags;
 
@@ -11,78 +18,33 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 	/*
 	 * Primary Attributes
 	 */
-	FGameplayTagTableRow tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Primary.Strength"),FString("Increases physical damage"));
-	GameplayTags.Attributes_Primary_Strength = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Primary_Strength,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Primary.Intelligence"),
-		FString("Increases magical damage"));
-	GameplayTags.Attributes_Primary_Intelligence = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Primary_Intelligence,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Primary.Resilience"),
-		FString("Increases Armor and Armor Penetration"));
-	GameplayTags.Attributes_Primary_Resilience = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Primary_Resilience,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Primary.Vigor"),
-		FString("Increases Health"));
-	GameplayTags.Attributes_Primary_Vigor = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Primary_Vigor,tempTagTableRow.DevComment);
+	DEFINE_ATTRIBUTES(Primary,Strength,"Increases physical damage");
+	DEFINE_ATTRIBUTES(Primary,Intelligence,"Increases magical damage");
+	DEFINE_ATTRIBUTES(Primary,Resilience,"Increases Armor and Armor Penetration");
+	DEFINE_ATTRIBUTES(Primary,Vigor,"Increases Health");
 
 	/*
 	 * Secondary Attributes
 	 */
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Secondary.Armor"),
-		FString("Reduces damage taken, improves Block Chance"));
-	GameplayTags.Attributes_Secondary_Armor = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Secondary_Armor,tempTagTableRow.DevComment);
+	DEFINE_ATTRIBUTES(Secondary,Armor,"Reduces damage taken, improves Block Chance");
+	DEFINE_ATTRIBUTES(Secondary,ArmorPenetration,"Ignores Percentage of enemy Armor, increases Critical Hit Chance");
+	DEFINE_ATTRIBUTES(Secondary,BlockChance,"Chance to cut incoming damage in half");
+	DEFINE_ATTRIBUTES(Secondary,CriticalHitChance,"Chance to double damage plus critical hit bonus");
+	DEFINE_ATTRIBUTES(Secondary,CriticalHitDamage,"Bonus damage added when a critical hit is scored");
+	DEFINE_ATTRIBUTES(Secondary,CriticalHitResistance,"Reduces Critical Hit Chance of attacking enemies");
+	DEFINE_ATTRIBUTES(Secondary,HealthRegeneration,"Amount of Health regenerated every 1 second");
+	DEFINE_ATTRIBUTES(Secondary,ManaRegeneration,"Amount of Mana regenerated every 1 second");
+	DEFINE_ATTRIBUTES(Secondary,MaxHealth,"Maximum amount of Health obtainable");
+	DEFINE_ATTRIBUTES(Secondary,MaxMana,"Maximum amount of Mana obtainable");
 
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Secondary.ArmorPenetration"),
-		FString("Ignores Percentage of enemy Armor, increases Critical Hit Chance"));
-	GameplayTags.Attributes_Secondary_ArmorPenetration = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Secondary_ArmorPenetration,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Secondary.BlockChance"),
-		FString("Chance to cut incoming damage in half"));
-	GameplayTags.Attributes_Secondary_BlockChance = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Secondary_BlockChance,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Secondary.CriticalHitChance"),
-		FString("Chance to double damage plus critical hit bonus"));
-	GameplayTags.Attributes_Secondary_CriticalHitChance = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Secondary_CriticalHitChance,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Secondary.CriticalHitDamage"),
-		FString("Bonus damage added when a critical hit is scored"));
-	GameplayTags.Attributes_Secondary_CriticalHitDamage = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Secondary_CriticalHitDamage,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Secondary.CriticalHitResistance"),
-		FString("Reduces Critical Hit Chance of attacking enemies"));
-	GameplayTags.Attributes_Secondary_CriticalHitResistance = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Secondary_CriticalHitResistance,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Secondary.HealthRegeneration"),
-		FString("Amount of Health regenerated every 1 second"));
-	GameplayTags.Attributes_Secondary_HealthRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Secondary_HealthRegeneration,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Secondary.ManaRegeneration"),
-		FString("Amount of Mana regenerated every 1 second"));
-	GameplayTags.Attributes_Secondary_ManaRegeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Secondary_ManaRegeneration,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Secondary.MaxHealth"),
-		FString("Maximum amount of Health obtainable"));
-	GameplayTags.Attributes_Secondary_MaxHealth = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Secondary_MaxHealth,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Secondary.MaxMana"),
-		FString("Maximum amount of Mana obtainable"));
-	GameplayTags.Attributes_Secondary_MaxMana = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Secondary_MaxMana,tempTagTableRow.DevComment);
-
+	/*
+	* Resistances
+	*/
+	DEFINE_ATTRIBUTES(Resistance,Arcane,"Resistance to Arcane damage");
+	DEFINE_ATTRIBUTES(Resistance,Fire,"Resistance to Fire damage");
+	DEFINE_ATTRIBUTES(Resistance,Lightning,"Resistance to Lightning damage");
+	DEFINE_ATTRIBUTES(Resistance,Physical,"Resistance to Physical damage");
+	
 	/*
 	 * Input Tags
 	 */
@@ -151,29 +113,6 @@ void FAuraGameplayTags::InitializeNativeGameplayTags()
 		FName("Damage.Physical"),
 		FString("Physical Damage Type")
 		);
-
-	/*
-	 * Resistances
-	 */
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Resistance.Arcane"),
-		FString("Resistance to Arcane damage"));
-	GameplayTags.Attributes_Resistance_Arcane = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Resistance_Arcane,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Resistance.Fire"),
-		FString("Resistance to Fire damage"));
-	GameplayTags.Attributes_Resistance_Fire= UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Resistance_Fire,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Resistance.Lightning"),
-		FString("Resistance to Lightning damage"));
-	GameplayTags.Attributes_Resistance_Lightning = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Resistance_Lightning,tempTagTableRow.DevComment);
-
-	tempTagTableRow=FGameplayTagTableRow(FName("Attributes.Resistance.Physical"),
-		FString("Resistance to Physical damage"));
-	GameplayTags.Attributes_Resistance_Physical = UGameplayTagsManager::Get().AddNativeGameplayTag(tempTagTableRow.Tag,tempTagTableRow.DevComment);
-	GameplayTags.AttributeTags.Add(GameplayTags.Attributes_Resistance_Physical,tempTagTableRow.DevComment);
 
 	/*
 	 * Debuffs

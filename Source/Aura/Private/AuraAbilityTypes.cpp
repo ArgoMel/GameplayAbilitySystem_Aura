@@ -87,10 +87,9 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 				RepBits |= 1 << 19;
 			}
 		}
-		
 	}
 
-	Ar.SerializeBits(&RepBits, 19);
+	Ar.SerializeBits(&RepBits, 20);
 
 	if (RepBits & (1 << 0))
 	{
@@ -192,11 +191,11 @@ bool FAuraGameplayEffectContext::NetSerialize(FArchive& Ar, UPackageMap* Map, bo
 			RadialDamageOrigin.NetSerialize(Ar, Map, bOutSuccess);
 		}
 	}
-	
 
 	if (Ar.IsLoading())
 	{
-		AddInstigator(Instigator.Get(), EffectCauser.Get()); // Just to initialize InstigatorAbilitySystemComponent
+		// Just to initialize InstigatorAbilitySystemComponent
+		AddInstigator(Instigator.Get(), EffectCauser.Get()); 
 	}	
 	
 	bOutSuccess = true;

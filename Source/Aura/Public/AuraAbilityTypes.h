@@ -71,16 +71,13 @@ struct FDamageEffectParams
 
 	UPROPERTY(BlueprintReadWrite)
 	FVector RadialDamageOrigin = FVector::ZeroVector;
-	
 };
 
 USTRUCT(BlueprintType)
 struct FAuraGameplayEffectContext : public FGameplayEffectContext
 {
 	GENERATED_BODY()
-
 public:
-
 	bool IsCriticalHit() const { return bIsCriticalHit; }
 	bool IsBlockedHit () const { return bIsBlockedHit; }
 	bool IsSuccessfulDebuff() const { return bIsSuccessfulDebuff; }
@@ -112,14 +109,14 @@ public:
 	/** Returns the actual struct used for serialization, subclasses must override this! */
 	virtual UScriptStruct* GetScriptStruct() const override
 	{
-		return FGameplayEffectContext::StaticStruct();
+		return StaticStruct();
 	}
 
 	/** Creates a copy of this context, used to duplicate for later modifications */
-	virtual FGameplayEffectContext* Duplicate() const override
+	virtual FAuraGameplayEffectContext* Duplicate() const override
 	{
-		FGameplayEffectContext* NewContext = new FGameplayEffectContext();
-		*NewContext = static_cast<FGameplayEffectContext>(*this);
+		FAuraGameplayEffectContext* NewContext = new FAuraGameplayEffectContext();
+		*NewContext = *this;
 		if (GetHitResult())
 		{
 			// Does a deep copy of the hit result
@@ -132,7 +129,6 @@ public:
 	virtual bool NetSerialize(FArchive& Ar, class UPackageMap* Map, bool& bOutSuccess) override;
 	
 protected:
-
 	UPROPERTY()
 	bool bIsBlockedHit = false;
 	

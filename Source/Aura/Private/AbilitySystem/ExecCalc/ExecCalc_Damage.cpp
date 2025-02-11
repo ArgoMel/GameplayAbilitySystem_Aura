@@ -11,8 +11,13 @@
 #include "Interaction/CombatInterface.h"
 #include "Kismet/GameplayStatics.h"
 
+#define DEFINE_ATTRIBUTE_MAP(S,P, T) \
+DEFINE_ATTRIBUTE_CAPTUREDEF(S, P, T, false);\
+Attributes.Add(TEXT(#P),P##Def);
+
 struct AuraDamageStatics
 {
+	TMap<FString,FGameplayEffectAttributeCaptureDefinition> Attributes;
 	DECLARE_ATTRIBUTE_CAPTUREDEF(Armor);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(ArmorPenetration);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(BlockChance);
@@ -27,17 +32,17 @@ struct AuraDamageStatics
 	
 	AuraDamageStatics()
 	{
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, Armor, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, BlockChance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, ArmorPenetration, Source, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitChance, Source, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, CriticalHitDamage, Source, false);
-
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, FireResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, LightningResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, ArcaneResistance, Target, false);
-		DEFINE_ATTRIBUTE_CAPTUREDEF(UAuraAttributeSet, PhysicalResistance, Target, false);
+		DEFINE_ATTRIBUTE_MAP(UAuraAttributeSet,Armor,Target);
+		DEFINE_ATTRIBUTE_MAP(UAuraAttributeSet,BlockChance,Target);
+		DEFINE_ATTRIBUTE_MAP(UAuraAttributeSet,ArmorPenetration,Source);
+		DEFINE_ATTRIBUTE_MAP(UAuraAttributeSet,CriticalHitChance,Source);
+		DEFINE_ATTRIBUTE_MAP(UAuraAttributeSet,CriticalHitResistance,Target);
+		DEFINE_ATTRIBUTE_MAP(UAuraAttributeSet,CriticalHitDamage,Source);
+		
+		DEFINE_ATTRIBUTE_MAP(UAuraAttributeSet,FireResistance,Target);
+		DEFINE_ATTRIBUTE_MAP(UAuraAttributeSet,LightningResistance,Target);
+		DEFINE_ATTRIBUTE_MAP(UAuraAttributeSet,ArcaneResistance,Target);
+		DEFINE_ATTRIBUTE_MAP(UAuraAttributeSet,PhysicalResistance,Target);
 	}
 };
 
@@ -49,35 +54,23 @@ static const AuraDamageStatics& DamageStatics()
 
 UExecCalc_Damage::UExecCalc_Damage()
 {
-	RelevantAttributesToCapture.Add(DamageStatics().ArmorDef);
-	RelevantAttributesToCapture.Add(DamageStatics().BlockChanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().ArmorPenetrationDef);
-	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitChanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitDamageDef);
-
-	RelevantAttributesToCapture.Add(DamageStatics().FireResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().LightningResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().ArcaneResistanceDef);
-	RelevantAttributesToCapture.Add(DamageStatics().PhysicalResistanceDef);
+	TArray<FGameplayEffectAttributeCaptureDefinition> attributes;
+	DamageStatics().Attributes.GenerateValueArray(attributes);
+	RelevantAttributesToCapture.Append(attributes);
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
 	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
 	const FAuraGameplayTags& Tags = FAuraGameplayTags::Get();
-		
-	TagsToCaptureDefs.Add(Tags.Attributes_Secondary_Armor, DamageStatics().ArmorDef);
-	TagsToCaptureDefs.Add(Tags.Attributes_Secondary_BlockChance, DamageStatics().BlockChanceDef);
-	TagsToCaptureDefs.Add(Tags.Attributes_Secondary_ArmorPenetration, DamageStatics().ArmorPenetrationDef);
-	TagsToCaptureDefs.Add(Tags.Attributes_Secondary_CriticalHitChance, DamageStatics().CriticalHitChanceDef);
-	TagsToCaptureDefs.Add(Tags.Attributes_Secondary_CriticalHitResistance, DamageStatics().CriticalHitResistanceDef);
-	TagsToCaptureDefs.Add(Tags.Attributes_Secondary_CriticalHitDamage, DamageStatics().CriticalHitDamageDef);
-
-	TagsToCaptureDefs.Add(Tags.Attributes_Resistance_Arcane, DamageStatics().ArcaneResistanceDef);
-	TagsToCaptureDefs.Add(Tags.Attributes_Resistance_Fire, DamageStatics().FireResistanceDef);
-	TagsToCaptureDefs.Add(Tags.Attributes_Resistance_Lightning, DamageStatics().LightningResistanceDef);
-	TagsToCaptureDefs.Add(Tags.Attributes_Resistance_Physical, DamageStatics().PhysicalResistanceDef);
+	for (auto& attributeTag:Tags.AttributeTags)
+	{
+		const FString name=attributeTag.AttributeName.ToString();
+		if (DamageStatics().Attributes.Contains(name))
+		{
+			TagsToCaptureDefs.Add(attributeTag.AttributeTag, DamageStatics().Attributes.FindRef(name));
+		}
+	}
 	
 	const UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
 	const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
@@ -138,7 +131,6 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 			// 4. Call UGameplayStatics::ApplyRadialDamageWithFalloff to cause damage (this will result in TakeDamage being called
 			//		on the Victim, which will then broadcast OnDamageDelegate)
 			// 5. In Lambda, set DamageTypeValue to the damage received from the broadcast *
-
 			if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(TargetAvatar))
 			{
 				CombatInterface->GetOnDamageSignature().AddLambda([&](float DamageAmount)

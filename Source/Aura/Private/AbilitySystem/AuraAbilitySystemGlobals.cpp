@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "AbilitySystem/AuraAbilitySystemGlobals.h"
 
 #include "AuraAbilityTypes.h"

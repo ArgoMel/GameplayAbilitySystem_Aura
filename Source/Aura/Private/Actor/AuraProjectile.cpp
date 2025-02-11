@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "Actor/AuraProjectile.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
@@ -108,10 +107,18 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 bool AAuraProjectile::IsValidOverlap(AActor* OtherActor) const
 {
-	if (DamageEffectParams.SourceAbilitySystemComponent == nullptr) return false;
+	if (DamageEffectParams.SourceAbilitySystemComponent == nullptr)
+	{
+		return false;
+	}
 	AActor* SourceAvatarActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
-	if (SourceAvatarActor == OtherActor) return false;
-	if (!UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor)) return false;
-
+	if (SourceAvatarActor == OtherActor)
+	{
+		return false;
+	}
+	if (!UAuraAbilitySystemLibrary::IsNotFriend(SourceAvatarActor, OtherActor))
+	{
+		return false;
+	}
 	return true;
 }

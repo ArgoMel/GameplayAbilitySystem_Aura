@@ -4,12 +4,37 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "AuraGameplayTags.generated.h"
 
 /**
  * AuraGameplayTags
  *
  * Singleton containing native Gameplay Tags
  */
+
+USTRUCT(BlueprintType)
+struct FAuraAttributeInfo
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FGameplayTag AttributeTag = FGameplayTag();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText AttributeName = FText();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FText AttributeDescription = FText();
+
+	UPROPERTY(BlueprintReadOnly)
+	float AttributeValue = 0.f;
+	FAuraAttributeInfo() = default;
+	FAuraAttributeInfo(FString Name, FString Description)
+	{
+		AttributeName=FText::FromString(Name);
+		AttributeDescription=FText::FromString(Description);
+	}
+};
 
 struct FAuraGameplayTags
 {
@@ -39,7 +64,7 @@ public:
 	FGameplayTag Attributes_Resistance_Physical;
 	
 	FGameplayTag Attributes_Meta_IncomingXP;
-	TMap<FGameplayTag,FString> AttributeTags;
+	TArray<FAuraAttributeInfo> AttributeTags;
 
 	FGameplayTag InputTag_LMB;
 	FGameplayTag InputTag_RMB;
@@ -86,8 +111,7 @@ public:
 	FGameplayTag Abilities_Fire_FireBlast;	
 	FGameplayTag Abilities_Lightning_Electrocute;
 	FGameplayTag Abilities_Arcane_ArcaneShards;
-
-
+	
 	FGameplayTag Abilities_Passive_HaloOfProtection;
 	FGameplayTag Abilities_Passive_LifeSiphon;
 	FGameplayTag Abilities_Passive_ManaSiphon;
