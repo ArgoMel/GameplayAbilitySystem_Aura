@@ -3,16 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "BehaviorTree/Tasks/BTTask_BlueprintBase.h"
+#include "BehaviorTree/BTTaskNode.h"
 #include "BTTask_Attack.generated.h"
 
-/**
- * 
- */
 UCLASS()
-class AURA_API UBTTask_Attack : public UBTTask_BlueprintBase
+class AURA_API UBTTask_Attack : public UBTTaskNode
 {
 	GENERATED_BODY()
-
+public:
+	UBTTask_Attack();
+protected:
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+protected:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere)
+	FBlackboardKeySelector CombatTargetSelector;
 };

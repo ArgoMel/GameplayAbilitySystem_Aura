@@ -9,9 +9,6 @@
 class UBlackboardComponent;
 class UBehaviorTreeComponent;
 
-/**
- * 
- */
 UCLASS()
 class AURA_API AAuraAIController : public AAIController
 {
@@ -19,7 +16,6 @@ class AURA_API AAuraAIController : public AAIController
 public:
 	AAuraAIController();
 protected:
-
 	UPROPERTY()
 	TObjectPtr<UBehaviorTreeComponent> BehaviorTreeComponent;
 };

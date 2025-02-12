@@ -19,6 +19,7 @@ AAuraEnemy::AAuraEnemy()
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false;
 	bUseControllerRotationYaw = false;
+	Tags.Add(Aura_Tag::Enemy);
 	
 	BaseWalkSpeed = 250.f;
 	

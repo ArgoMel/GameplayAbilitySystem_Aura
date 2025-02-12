@@ -61,17 +61,6 @@ UExecCalc_Damage::UExecCalc_Damage()
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams, FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
-	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
-	const FAuraGameplayTags& Tags = FAuraGameplayTags::Get();
-	for (auto& attributeTag:Tags.AttributeTags)
-	{
-		const FString name=attributeTag.AttributeName.ToString();
-		if (DamageStatics().Attributes.Contains(name))
-		{
-			TagsToCaptureDefs.Add(attributeTag.AttributeTag, DamageStatics().Attributes.FindRef(name));
-		}
-	}
-	
 	const UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
 	const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
 
@@ -99,7 +88,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.TargetTags = TargetTags;
 
 	// Debuff
-	DetermineDebuff(ExecutionParams, Spec, EvaluationParameters, TagsToCaptureDefs);
+	DetermineDebuff(ExecutionParams, Spec, EvaluationParameters);
 
 	// Get Damage Set by Caller Magnitude
 	float Damage = 0.f;
@@ -107,9 +96,12 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	{
 		const FGameplayTag DamageTypeTag = Pair.Key;
 		const FGameplayTag ResistanceTag = Pair.Value;
-		
-		checkf(TagsToCaptureDefs.Contains(ResistanceTag), TEXT("TagsToCaptureDefs doesn't contain Tag: [%s] in ExecCalc_Damage"), *ResistanceTag.ToString());
-		const FGameplayEffectAttributeCaptureDefinition CaptureDef = TagsToCaptureDefs[ResistanceTag];
+
+		TArray<FString> parses;
+		ResistanceTag.ToString().ParseIntoArray(parses,TEXT("."));
+		FString resistanceTagName=parses.Last()+TEXT("Resistance");
+		checkf(DamageStatics().Attributes.Contains(resistanceTagName), TEXT("DamageStatics().Attributes doesn't contain Tag: [%s] in ExecCalc_Damage"), *ResistanceTag.ToString());
+		const FGameplayEffectAttributeCaptureDefinition CaptureDef = DamageStatics().Attributes.FindRef(resistanceTagName);
 
 		float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag, false);
 		if (DamageTypeValue <= 0.f)
@@ -218,7 +210,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
 }
 
-void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FGameplayEffectSpec& Spec, FAggregatorEvaluateParameters EvaluationParameters, const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& InTagsToDefs) const
+void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParameters& ExecutionParams, const FGameplayEffectSpec& Spec, FAggregatorEvaluateParameters EvaluationParameters) const
 {
 	const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
 
@@ -233,7 +225,13 @@ void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParam
 
 			float TargetDebuffResistance = 0.f;
 			const FGameplayTag& ResistanceTag = GameplayTags.DamageTypesToResistances[DamageType];
-			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(InTagsToDefs[ResistanceTag], EvaluationParameters, TargetDebuffResistance);
+
+			TArray<FString> parses;
+			ResistanceTag.ToString().ParseIntoArray(parses,TEXT("."));
+			FString resistanceTagName=parses.Last()+TEXT("Resistance");
+			checkf(DamageStatics().Attributes.Contains(resistanceTagName), TEXT("DamageStatics().Attributes doesn't contain Tag: [%s] in ExecCalc_Damage"), *ResistanceTag.ToString());
+			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().Attributes.FindRef(resistanceTagName), EvaluationParameters, TargetDebuffResistance);
+			
 			TargetDebuffResistance = FMath::Max<float>(TargetDebuffResistance, 0.f);
 			const float EffectiveDebuffChance = SourceDebuffChance * ( 100 - TargetDebuffResistance ) / 100.f;
 			const bool bDebuff = FMath::RandRange(1, 100) < EffectiveDebuffChance;

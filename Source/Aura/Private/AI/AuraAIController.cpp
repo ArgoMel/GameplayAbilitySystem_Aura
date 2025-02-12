@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "AI/AuraAIController.h"
 
 #include "BehaviorTree/BehaviorTreeComponent.h"

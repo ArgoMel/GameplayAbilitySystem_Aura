@@ -7,6 +7,7 @@ AttributeMenu PreContstruct에서 어트리뷰트 개수만큼 자동 생성하�
 디졸브 메터리얼은 메터리얼 함수로 변경(tps 참조)
 
 ExecCalc_Damage에 auragameplaytag쪽 구조체를 같이 넣는게 난듯
+AttributeSet에 변수명은 반드시 태그 끝네임이랑 동일하게 해야 노가다 안하게 할수있음
 
 게임플레이 태그,어빌리티  플러그인 세팅
 프로젝트 세팅 : 네비 클라이언트에서 실행 체크
