@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "UI/WidgetController/AuraWidgetController.h"
 
 #include "Player/AuraPlayerController.h"
@@ -29,8 +28,10 @@ void UAuraWidgetController::BindCallbacksToDependencies()
 
 void UAuraWidgetController::BroadcastAbilityInfo()
 {
-	if (!GetAuraASC()->bStartupAbilitiesGiven) return;
-
+	if (!GetAuraASC()->bStartupAbilitiesGiven)
+	{
+		return;
+	}
 	FForEachAbility BroadcastDelegate;
 	BroadcastDelegate.BindLambda([this](const FGameplayAbilitySpec& AbilitySpec)
 	{
