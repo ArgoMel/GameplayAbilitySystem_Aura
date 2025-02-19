@@ -205,14 +205,14 @@ void AAuraCharacter::AddToSpellPoints_Implementation(int32 InSpellPoints)
 
 int32 AAuraCharacter::GetAttributePoints_Implementation() const
 {
-	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	return AuraPlayerState->GetAttributePoints();
 }
 
 int32 AAuraCharacter::GetSpellPoints_Implementation() const
 {
-	AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
+	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
 	check(AuraPlayerState);
 	return AuraPlayerState->GetSpellPoints();
 }
@@ -245,7 +245,7 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 
 		SaveData->PlayerStartTag = CheckpointTag;
 
-		if (AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState()))
+		if (const AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState()))
 		{
 			SaveData->PlayerLevel = AuraPlayerState->GetPlayerLevel();
 			SaveData->XP = AuraPlayerState->GetXP();

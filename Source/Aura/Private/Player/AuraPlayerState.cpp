@@ -68,26 +68,22 @@ void AAuraPlayerState::SetSpellPoints(int32 InPoints)
 	OnSpellPointsChangedDelegate.Broadcast(SpellPoints);
 }
 
-// ReSharper disable once CppMemberFunctionMayBeConst
-void AAuraPlayerState::OnRep_Level(int32 OldLevel)
+void AAuraPlayerState::OnRep_Level(int32 OldLevel) const
 {
 	OnLevelChangedDelegate.Broadcast(Level, true);
 }
 
-// ReSharper disable once CppMemberFunctionMayBeConst
-void AAuraPlayerState::OnRep_XP(int32 OldXP)
+void AAuraPlayerState::OnRep_XP(int32 OldXP) const
 {
 	OnXPChangedDelegate.Broadcast(XP);
 }
 
-// ReSharper disable once CppMemberFunctionMayBeConst
-void AAuraPlayerState::OnRep_AttributePoints(int32 OldAttributePoints)
+void AAuraPlayerState::OnRep_AttributePoints(int32 OldAttributePoints) const
 {
 	OnAttributePointsChangedDelegate.Broadcast(AttributePoints);
 }
 
-// ReSharper disable once CppMemberFunctionMayBeConst
-void AAuraPlayerState::OnRep_SpellPoints(int32 OldSpellPoints)
+void AAuraPlayerState::OnRep_SpellPoints(int32 OldSpellPoints) const
 {
 	OnSpellPointsChangedDelegate.Broadcast(SpellPoints);
 }

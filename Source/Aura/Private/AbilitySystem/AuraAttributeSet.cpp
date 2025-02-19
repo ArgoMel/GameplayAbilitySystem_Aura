@@ -186,7 +186,6 @@ void UAuraAttributeSet::HandleIncomingDamage(const FEffectProperties& Props)
 			ICombatInterface* CombatInterface = Cast<ICombatInterface>(Props.TargetAvatarActor);
 			if (CombatInterface)
 			{
-				//FVector Impulse = UAuraAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle);
 				CombatInterface->Die(UAuraAbilitySystemLibrary::GetDeathImpulse(Props.EffectContextHandle));
 			}
 			SendXPEvent(Props);
@@ -228,7 +227,7 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& Props) const
 	const float DebuffDuration = UAuraAbilitySystemLibrary::GetDebuffDuration(Props.EffectContextHandle);
 	const float DebuffFrequency = UAuraAbilitySystemLibrary::GetDebuffFrequency(Props.EffectContextHandle);
 
-	FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *DamageType.ToString());
+	const FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *DamageType.ToString());
 	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
 
 	Effect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
@@ -269,12 +268,12 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& Props) const
 
 	ModifierInfo.ModifierMagnitude = FScalableFloat(DebuffDamage);
 	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
-	ModifierInfo.Attribute = UAuraAttributeSet::GetIncomingDamageAttribute();
+	ModifierInfo.Attribute = GetIncomingDamageAttribute();
 	
-	if (FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f))
+	if (const FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f))
 	{
 		FAuraGameplayEffectContext* AuraContext = static_cast<FAuraGameplayEffectContext*>(MutableSpec->GetContext().Get());
-		TSharedPtr<FGameplayTag> DebuffDamageType = MakeShareable(new FGameplayTag(DamageType));
+		const TSharedPtr<FGameplayTag> DebuffDamageType = MakeShareable(new FGameplayTag(DamageType));
 		AuraContext->SetDamageType(DebuffDamageType);
 
 		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
@@ -287,7 +286,8 @@ void UAuraAttributeSet::HandleIncomingXP(const FEffectProperties& Props)
 	SetIncomingXP(0.f);
 
 	// Source Character is the owner, since GA_ListenForEvents applies GE_EventBasedEffect, adding to IncomingXP
-	if (Props.SourceCharacter->Implements<UPlayerInterface>() && Props.SourceCharacter->Implements<UCombatInterface>())
+	if (Props.SourceCharacter->Implements<UPlayerInterface>()
+		&& Props.SourceCharacter->Implements<UCombatInterface>())
 	{
 		const int32 CurrentLevel = ICombatInterface::Execute_GetPlayerLevel(Props.SourceCharacter);
 		const int32 CurrentXP = IPlayerInterface::Execute_GetXP(Props.SourceCharacter);
