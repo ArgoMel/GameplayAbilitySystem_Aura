@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "UI/HUD/AuraHUD.h"
 
 #include "UI/Widget/AuraUserWidget.h"
