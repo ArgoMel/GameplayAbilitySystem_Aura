@@ -315,8 +315,11 @@ void UAuraAbilitySystemComponent::UpdateAbilityStatuses(int32 Level)
 	UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
 	for (const FAuraAbilityInfo& Info : AbilityInfo->AbilityInformation)
 	{
-		if (!Info.AbilityTag.IsValid()) continue;
-		if (Level < Info.LevelRequirement) continue;
+		if (!Info.AbilityTag.IsValid()
+			||Level < Info.LevelRequirement)
+		{
+			continue;
+		}
 		if (GetSpecFromAbilityTag(Info.AbilityTag) == nullptr)
 		{
 			FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Info.Ability, 1);
@@ -345,7 +348,8 @@ void UAuraAbilitySystemComponent::ServerSpendSpellPoint_Implementation(const FGa
 			AbilitySpec->GetDynamicSpecSourceTags().AddTag(GameplayTags.Abilities_Status_Unlocked);
 			Status = GameplayTags.Abilities_Status_Unlocked;
 		}
-		else if (Status.MatchesTagExact(GameplayTags.Abilities_Status_Equipped) || Status.MatchesTagExact(GameplayTags.Abilities_Status_Unlocked))
+		else if (Status.MatchesTagExact(GameplayTags.Abilities_Status_Equipped)
+			|| Status.MatchesTagExact(GameplayTags.Abilities_Status_Unlocked))
 		{
 			AbilitySpec->Level += 1;
 		}
@@ -361,13 +365,11 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 		const FAuraGameplayTags& GameplayTags = FAuraGameplayTags::Get();
 		const FGameplayTag& PrevSlot = GetInputTagFromSpec(*AbilitySpec);
 		const FGameplayTag& Status = GetStatusFromSpec(*AbilitySpec);
-
-		const bool bStatusValid = Status == GameplayTags.Abilities_Status_Equipped || Status == GameplayTags.Abilities_Status_Unlocked;
-		if (bStatusValid)
+		
+		if (Status == GameplayTags.Abilities_Status_Equipped
+			|| Status == GameplayTags.Abilities_Status_Unlocked)
 		{
-
 			// Handle activation/deactivation for passive abilities
-
 			if (!SlotIsEmpty(Slot)) // There is an ability in this slot already. Deactivate and clear its slot.
 			{
 				FGameplayAbilitySpec* SpecWithSlot = GetSpecWithSlot(Slot);
@@ -424,7 +426,8 @@ bool UAuraAbilitySystemComponent::GetDescriptionsByAbilityTag(const FGameplayTag
 		}
 	}
 	const UAbilityInfo* AbilityInfo = UAuraAbilitySystemLibrary::GetAbilityInfo(GetAvatarActor());
-	if (!AbilityTag.IsValid() || AbilityTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_None))
+	if (!AbilityTag.IsValid()
+		|| AbilityTag.MatchesTagExact(FAuraGameplayTags::Get().Abilities_None))
 	{
 		OutDescription = FString();
 	}

@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "AbilitySystem/Abilities/AuraFireBolt.h"
 
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
@@ -38,34 +37,31 @@ FString UAuraFireBolt::GetDescription(int32 Level)
 			Cooldown,
 			ScaledDamage);
 	}
-	else
-	{
-		return FString::Printf(TEXT(
-			// Title
-			"<Title>FIRE BOLT</>\n\n"
+	return FString::Printf(TEXT(
+		// Title
+		"<Title>FIRE BOLT</>\n\n"
 
-			// Level
-			"<Small>Level: </><Level>%d</>\n"
-			// ManaCost
-			"<Small>ManaCost: </><ManaCost>%.1f</>\n"
-			// Cooldown
-			"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
+		// Level
+		"<Small>Level: </><Level>%d</>\n"
+		// ManaCost
+		"<Small>ManaCost: </><ManaCost>%.1f</>\n"
+		// Cooldown
+		"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
 
-			// Number of FireBolts
-			"<Default>Launches %d bolts of fire, "
-			"exploding on impact and dealing: </>"
+		// Number of FireBolts
+		"<Default>Launches %d bolts of fire, "
+		"exploding on impact and dealing: </>"
 
-			// Damage
-			"<Damage>%d</><Default> fire damage with"
-			" a chance to burn</>"),
+		// Damage
+		"<Damage>%d</><Default> fire damage with"
+		" a chance to burn</>"),
 
-			// Values
-			Level,
-			ManaCost,
-			Cooldown,
-			FMath::Min(Level, NumProjectiles),
-			ScaledDamage);		
-	}
+	    // Values
+	    Level,
+	    ManaCost,
+	    Cooldown,
+	    FMath::Min(Level, NumProjectiles),
+	    ScaledDamage);
 }
 
 FString UAuraFireBolt::GetNextLevelDescription(int32 Level)
@@ -100,17 +96,20 @@ FString UAuraFireBolt::GetNextLevelDescription(int32 Level)
 			ScaledDamage);
 }
 
-void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTarget)
+void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTarget) const
 {
-	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
-	if (!bIsServer) return;
-
+	if (!GetAvatarActorFromActorInfo()->HasAuthority())
+	{
+		return;
+	}
 	const FVector SocketLocation = ICombatInterface::Execute_GetCombatSocketLocation(
 		GetAvatarActorFromActorInfo(),
 		SocketTag);
 	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
-	if (bOverridePitch) Rotation.Pitch = PitchOverride;
-	
+	if (bOverridePitch)
+	{
+		Rotation.Pitch = PitchOverride;
+	}
 	const FVector Forward = Rotation.Vector();
 	const int32 EffectiveNumProjectiles = FMath::Min(NumProjectiles, GetAbilityLevel());
 	TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, ProjectileSpread, EffectiveNumProjectiles);
@@ -122,11 +121,7 @@ void UAuraFireBolt::SpawnProjectiles(const FVector& ProjectileTargetLocation, co
 		SpawnTransform.SetRotation(Rot.Quaternion());
 
 		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
-		ProjectileClass,
-		SpawnTransform,
-		GetOwningActorFromActorInfo(),
-		Cast<APawn>(GetOwningActorFromActorInfo()),
-		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		ProjectileClass, SpawnTransform, GetOwningActorFromActorInfo(), Cast<APawn>(GetOwningActorFromActorInfo()), ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	
 		Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 
