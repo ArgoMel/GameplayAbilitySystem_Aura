@@ -1,12 +1,10 @@
 // Copyright Druid Mechanics
 
-
 #include "AbilitySystem/Debuff/DebuffNiagaraComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Interaction/CombatInterface.h"
-
 
 UDebuffNiagaraComponent::UDebuffNiagaraComponent()
 {
@@ -16,13 +14,12 @@ UDebuffNiagaraComponent::UDebuffNiagaraComponent()
 void UDebuffNiagaraComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetOwner());
+	
 	if (UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner()))
 	{
 		ASC->RegisterGameplayTagEvent(DebuffTag, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &UDebuffNiagaraComponent::DebuffTagChanged);
 	}
-	else if (CombatInterface)
+	else if (ICombatInterface* CombatInterface = Cast<ICombatInterface>(GetOwner()))
 	{
 		CombatInterface->GetOnASCRegisteredDelegate().AddWeakLambda(this, [this](UAbilitySystemComponent* InASC)
 		{

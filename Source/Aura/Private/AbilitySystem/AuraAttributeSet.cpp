@@ -234,37 +234,25 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& Props) const
 	Effect->Period = DebuffFrequency;
 	Effect->DurationMagnitude = FScalableFloat(DebuffDuration);
 
-	const FGameplayTag DebuffTag = GameplayTags.DamageTypesToDebuffs[DamageType];
-
 	FInheritedTagContainer tagContainer = FInheritedTagContainer();
 	UTargetTagsGameplayEffectComponent& component = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
-	tagContainer.Added.AddTag(DebuffTag);
-	tagContainer.CombinedTags.AddTag(DebuffTag);
 	
-	//Effect->InheritableOwnedTagsContainer.AddTag(DebuffTag);
+	const FGameplayTag DebuffTag = GameplayTags.DamageTypesToDebuffs[DamageType];
+	tagContainer.Added.AddTag(DebuffTag);
 	if (DebuffTag.MatchesTagExact(GameplayTags.Debuff_Stun))
 	{
 		tagContainer.Added.AddTag(GameplayTags.Player_Block_CursorTrace);
-		tagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_CursorTrace);
 		tagContainer.Added.AddTag(GameplayTags.Player_Block_InputHeld);
-		tagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputHeld);
 		tagContainer.Added.AddTag(GameplayTags.Player_Block_InputPressed);
-		tagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputPressed);
 		tagContainer.Added.AddTag(GameplayTags.Player_Block_InputReleased);
-		tagContainer.CombinedTags.AddTag(GameplayTags.Player_Block_InputReleased);
-		// Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_CursorTrace);
-		// Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputHeld);
-		// Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputPressed);
-		// Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.Player_Block_InputReleased);
 	}
 	component.SetAndApplyTargetTagChanges(tagContainer);
 
 	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
 	Effect->StackLimitCount = 1;
-
-	const int32 Index = Effect->Modifiers.Num();
+	
 	Effect->Modifiers.Add(FGameplayModifierInfo());
-	FGameplayModifierInfo& ModifierInfo = Effect->Modifiers[Index];
+	FGameplayModifierInfo& ModifierInfo = Effect->Modifiers.Last();
 
 	ModifierInfo.ModifierMagnitude = FScalableFloat(DebuffDamage);
 	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
