@@ -376,7 +376,8 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 			|| Status == GameplayTags.Abilities_Status_Unlocked)
 		{
 			// Handle activation/deactivation for passive abilities
-			if (!SlotIsEmpty(Slot)) // There is an ability in this slot already. Deactivate and clear its slot.
+			// There is an ability in this slot already. Deactivate and clear its slot.
+			if (!SlotIsEmpty(Slot)) 
 			{
 				FGameplayAbilitySpec* SpecWithSlot = GetSpecWithSlot(Slot);
 				if (SpecWithSlot)
@@ -397,8 +398,8 @@ void UAuraAbilitySystemComponent::ServerEquipAbility_Implementation(const FGamep
 					ClearSlot(SpecWithSlot);
 				}
 			}
-
-			if (!AbilityHasAnySlot(*AbilitySpec)) // Ability doesn't yet have a slot (it's not active)
+			// Ability doesn't yet have a slot (it's not active)
+			if (!AbilityHasAnySlot(*AbilitySpec)) 
 			{
 				if (IsPassiveAbility(*AbilitySpec))
 				{

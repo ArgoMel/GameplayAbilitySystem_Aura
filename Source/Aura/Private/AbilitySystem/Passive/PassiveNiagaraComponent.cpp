@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "AbilitySystem/Passive/PassiveNiagaraComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
@@ -26,10 +25,10 @@ void UPassiveNiagaraComponent::BeginPlay()
 	{
 		CombatInterface->GetOnASCRegisteredDelegate().AddLambda([this](UAbilitySystemComponent* ASC)
 		{
-			if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner())))
+			if (UAuraAbilitySystemComponent* auraASC = Cast<UAuraAbilitySystemComponent>(ASC))
 			{
-				AuraASC->ActivatePassiveEffect.AddUObject(this, &UPassiveNiagaraComponent::OnPassiveActivate);
-				ActivateIfEquipped(AuraASC);
+				auraASC->ActivatePassiveEffect.AddUObject(this, &UPassiveNiagaraComponent::OnPassiveActivate);
+				ActivateIfEquipped(auraASC);
 			}
 		});
 	}
@@ -37,8 +36,7 @@ void UPassiveNiagaraComponent::BeginPlay()
 
 void UPassiveNiagaraComponent::ActivateIfEquipped(UAuraAbilitySystemComponent* AuraASC)
 {
-	const bool bStartupAbilitiesGiven = AuraASC->bStartupAbilitiesGiven;
-	if (bStartupAbilitiesGiven)
+	if (AuraASC->bStartupAbilitiesGiven)
 	{
 		if (AuraASC->GetStatusFromAbilityTag(PassiveSpellTag) == FAuraGameplayTags::Get().Abilities_Status_Equipped)
 		{
