@@ -128,9 +128,7 @@ void AAuraPlayerController::CursorTrace()
 	{
 		UnHighlightActor(LastActor);
 		UnHighlightActor(ThisActor);
-		if (IsValid(ThisActor) && ThisActor->Implements<UHighlightInterface>())
-
-			LastActor = nullptr;
+		LastActor = nullptr;
 		ThisActor = nullptr;
 		return;
 	}

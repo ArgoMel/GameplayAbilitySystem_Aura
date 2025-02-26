@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "AbilitySystem/Abilities/AuraBeamSpell.h"
 
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
@@ -34,7 +33,7 @@ void UAuraBeamSpell::TraceFirstTarget(const FVector& BeamTargetLocation)
 	check(OwnerCharacter);
 	if (OwnerCharacter->Implements<UCombatInterface>())
 	{
-		if (USkeletalMeshComponent* Weapon = ICombatInterface::Execute_GetWeapon(OwnerCharacter))
+		if (const USkeletalMeshComponent* Weapon = ICombatInterface::Execute_GetWeapon(OwnerCharacter))
 		{
 			TArray<AActor*> ActorsToIgnore;
 			ActorsToIgnore.Add(OwnerCharacter);
@@ -81,9 +80,8 @@ void UAuraBeamSpell::StoreAdditionalTargets(TArray<AActor*>& OutAdditionalTarget
 		ActorsToIgnore,
 		850.f,
 		MouseHitActor->GetActorLocation());
-	
-	int32 NumAdditionalTargets = FMath::Min(GetAbilityLevel() - 1, MaxNumShockTargets);
-	//int32 NumAdditionTargets = 5;
+
+	const int32 NumAdditionalTargets = FMath::Min(GetAbilityLevel() - 1, MaxNumShockTargets);
 	
 	UAuraAbilitySystemLibrary::GetClosestTargets(
 		NumAdditionalTargets,

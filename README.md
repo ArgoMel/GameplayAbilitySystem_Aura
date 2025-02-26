@@ -23,7 +23,17 @@ DefaultGame :
 ProjectID=70BA0A3B40E2B9899612678C078FC24A
 CopyrightNotice=Copyright Argo
 
+커스텀 FGameplayEffectContext 설정,
+게임플레이 큐 위치 설정(최적화 옵션)
+[/Script/GameplayAbilities.AbilitySystemGlobals]
++AbilitySystemGlobalsClassName="/Script/Aura.AuraAbilitySystemGlobals"
++GameplayCueNotifyPaths=/Game/Blueprints/AbilitySystem/GameplayCueNotifies
+
 DefaultEngine :
 에셋매니저 클래스 설정
 [/Script/Engine.Engine]
 AssetManagerClassName=/Script/Aura.AuraAssetManager
+
+게임플레이 큐 rpc 업데이트 빈도
+[ConsoleVariables]
+net.MaxRPCPerNetUpdate=10

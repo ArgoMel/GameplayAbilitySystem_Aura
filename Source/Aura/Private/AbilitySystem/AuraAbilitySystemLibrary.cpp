@@ -478,32 +478,18 @@ void UAuraAbilitySystemLibrary::GetLivePlayersWithinRadius(const UObject* WorldC
 
 void UAuraAbilitySystemLibrary::GetClosestTargets(int32 MaxTargets, const TArray<AActor*>& Actors, TArray<AActor*>& OutClosestTargets, const FVector& Origin)
 {
-	if (Actors.Num() <= MaxTargets)
+	TMap<AActor*, double> actorsToDist;
+	for (AActor* actor : Actors)
 	{
-		OutClosestTargets = Actors;
-		return;
+		const double distance = (actor->GetActorLocation() - Origin).Length();
+		actorsToDist.Add(actor,distance);
 	}
-
-	TArray<AActor*> ActorsToCheck = Actors;
-	int32 NumTargetsFound = 0;
-
-	while (NumTargetsFound < MaxTargets)
+	actorsToDist.ValueSort([](double A,double B){return A<B;});
+	actorsToDist.GenerateKeyArray(OutClosestTargets);
+	
+	while (OutClosestTargets.Num()>MaxTargets)
 	{
-		if (ActorsToCheck.Num() == 0) break;
-		double ClosestDistance = TNumericLimits<double>::Max();
-		AActor* ClosestActor;
-		for (AActor* PotentialTarget : ActorsToCheck)
-		{
-			const double Distance = (PotentialTarget->GetActorLocation() - Origin).Length();
-			if (Distance < ClosestDistance)
-			{
-				ClosestDistance = Distance;
-				ClosestActor = PotentialTarget;
-			}
-		}
-		ActorsToCheck.Remove(ClosestActor);
-		OutClosestTargets.AddUnique(ClosestActor);
-		++NumTargetsFound;
+		OutClosestTargets.Pop();
 	}
 }
 
@@ -550,7 +536,7 @@ TArray<FRotator> UAuraAbilitySystemLibrary::EvenlySpacedRotators(const FVector& 
 	if (NumRotators > 1)
 	{
 		const float DeltaSpread = Spread / (NumRotators - 1);
-		for (int32 i = 0; i < NumRotators; i++)
+		for (int32 i = 0; i < NumRotators; ++i)
 		{
 			const FVector Direction = LeftOfSpread.RotateAngleAxis(DeltaSpread * i, FVector::UpVector);
 			Rotators.Add(Direction.Rotation());
