@@ -1,12 +1,10 @@
 // Copyright Druid Mechanics
 
-
 #include "Actor/PointCollection.h"
 
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Kismet/KismetMathLibrary.h"
 
-// Sets default values
 APointCollection::APointCollection()
 {
 	PrimaryActorTick.bCanEverTick = false;
@@ -54,8 +52,11 @@ APointCollection::APointCollection()
 	Pt_10 = CreateDefaultSubobject<USceneComponent>("Pt_10");
 	ImmutablePts.Add(Pt_10);
 	Pt_10->SetupAttachment(GetRootComponent());
+}
 
-	
+void APointCollection::BeginPlay()
+{
+	Super::BeginPlay();
 }
 
 TArray<USceneComponent*> APointCollection::GetGroundPoints(const FVector& GroundLocation, int32 NumPoints, float YawOverride)
@@ -66,7 +67,10 @@ TArray<USceneComponent*> APointCollection::GetGroundPoints(const FVector& Ground
 
 	for (USceneComponent* Pt : ImmutablePts)
 	{
-		if (ArrayCopy.Num() >= NumPoints) return ArrayCopy;
+		if (ArrayCopy.Num() >= NumPoints)
+		{
+			return ArrayCopy;
+		}
 
 		if (Pt != Pt_0)
 		{
@@ -93,11 +97,5 @@ TArray<USceneComponent*> APointCollection::GetGroundPoints(const FVector& Ground
 		ArrayCopy.Add(Pt);
 	}
 	return ArrayCopy;
-}
-
-void APointCollection::BeginPlay()
-{
-	Super::BeginPlay();
-	
 }
 

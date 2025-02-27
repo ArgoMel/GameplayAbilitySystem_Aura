@@ -10,16 +10,16 @@ UCLASS()
 class AURA_API APointCollection : public AActor
 {
 	GENERATED_BODY()
-	
 public:	
 	APointCollection();
-
-	UFUNCTION(BlueprintPure)
-	TArray<USceneComponent*> GetGroundPoints(const FVector& GroundLocation, int32 NumPoints, float YawOverride = 0.f);
-	
 protected:
 	virtual void BeginPlay() override;
+	
+public:	
+	UFUNCTION(BlueprintPure)
+	TArray<USceneComponent*> GetGroundPoints(const FVector& GroundLocation, int32 NumPoints, float YawOverride = 0.f);
 
+protected:
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TArray<USceneComponent*> ImmutablePts;
 
@@ -55,6 +55,4 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
 	TObjectPtr<USceneComponent> Pt_10;
-
-	
 };

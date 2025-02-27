@@ -13,6 +13,10 @@ GA_ListenForEvent c++로 하면 배열 안만들어도 될듯
 
 게임플레이 태그, 어빌리티, 모션 워핑(루트 모션 체크 필수) 플러그인 세팅
 프로젝트 세팅 : 네비 클라이언트에서 실행 체크
+모션블러 끄는게 나음
+메쉬 디스턴스 필드 끄고 루멘 꺼야 그림자 자글거리는거 없어짐
+ANIT-AILASING FXAA
+
 DefaultGame : 
 커스텀 FGameplayEffectContext 쓰는경우
 [/Script/GameplayAbilities.AbilitySystemGlobals]

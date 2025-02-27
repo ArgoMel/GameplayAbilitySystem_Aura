@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "AbilitySystem/Abilities/ArcaneShards.h"
 
 FString UArcaneShards::GetDescription(int32 Level)
@@ -33,32 +32,29 @@ FString UArcaneShards::GetDescription(int32 Level)
 			Cooldown,
 			ScaledDamage);
 	}
-	else
-	{
-		return FString::Printf(TEXT(
-			// Title
-			"<Title>ARCANE SHARDS</>\n\n"
+	return FString::Printf(TEXT(
+		// Title
+		"<Title>ARCANE SHARDS</>\n\n"
 
-			// Level
-			"<Small>Level: </><Level>%d</>\n"
-			// ManaCost
-			"<Small>ManaCost: </><ManaCost>%.1f</>\n"
-			// Cooldown
-			"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
+		// Level
+		"<Small>Level: </><Level>%d</>\n"
+		// ManaCost
+		"<Small>ManaCost: </><ManaCost>%.1f</>\n"
+		// Cooldown
+		"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
 
-			// Addition Number of Shock Targets
-			"<Default>Summon %d shards of arcane energy, causing radial arcane damage of </>"
+		// Addition Number of Shock Targets
+		"<Default>Summon %d shards of arcane energy, causing radial arcane damage of </>"
 
-			// Damage
-			"<Damage>%d</><Default> at the shard origins.</>"),
+		// Damage
+		"<Damage>%d</><Default> at the shard origins.</>"),
 
-			// Values
-			Level,
-			ManaCost,
-			Cooldown,
-			FMath::Min(Level, MaxNumShards),
-			ScaledDamage);		
-	}
+	    // Values
+	    Level,
+	    ManaCost,
+	    Cooldown,
+	    FMath::Min(Level, MaxNumShards),
+	    ScaledDamage);
 }
 
 FString UArcaneShards::GetNextLevelDescription(int32 Level)

@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "AbilitySystem/Abilities/Electrocute.h"
 
 FString UElectrocute::GetDescription(int32 Level)
@@ -34,34 +33,31 @@ FString UElectrocute::GetDescription(int32 Level)
 			Cooldown,
 			ScaledDamage);
 	}
-	else
-	{
-		return FString::Printf(TEXT(
-			// Title
-			"<Title>ELECTROCUTE</>\n\n"
+	return FString::Printf(TEXT(
+		// Title
+		"<Title>ELECTROCUTE</>\n\n"
 
-			// Level
-			"<Small>Level: </><Level>%d</>\n"
-			// ManaCost
-			"<Small>ManaCost: </><ManaCost>%.1f</>\n"
-			// Cooldown
-			"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
+		// Level
+		"<Small>Level: </><Level>%d</>\n"
+		// ManaCost
+		"<Small>ManaCost: </><ManaCost>%.1f</>\n"
+		// Cooldown
+		"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
 
-			// Addition Number of Shock Targets
-			"<Default>Emits a beam of lightning, "
-			"propagating to %d additional targets nearby, causing </>"
+		// Addition Number of Shock Targets
+		"<Default>Emits a beam of lightning, "
+		"propagating to %d additional targets nearby, causing </>"
 
-			// Damage
-			"<Damage>%d</><Default> lightning damage with"
-			" a chance to stun</>"),
+		// Damage
+		"<Damage>%d</><Default> lightning damage with"
+		" a chance to stun</>"),
 
-			// Values
-			Level,
-			ManaCost,
-			Cooldown,
-			FMath::Min(Level, MaxNumShockTargets - 1),
-			ScaledDamage);		
-	}
+	    // Values
+	    Level,
+	    ManaCost,
+	    Cooldown,
+	    FMath::Min(Level, MaxNumShockTargets - 1),
+	    ScaledDamage);
 }
 
 FString UElectrocute::GetNextLevelDescription(int32 Level)

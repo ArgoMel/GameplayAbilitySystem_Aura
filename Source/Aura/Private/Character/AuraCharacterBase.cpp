@@ -32,10 +32,12 @@ AAuraCharacterBase::AAuraCharacterBase()
 	GetMesh()->SetCollisionResponseToChannel(ECC_Projectile, ECR_Overlap);
 	GetMesh()->SetGenerateOverlapEvents(true);
 	GetMesh()->VisibilityBasedAnimTickOption = EVisibilityBasedAnimTickOption::AlwaysTickPoseAndRefreshBones;
+	GetMesh()->bReceivesDecals = false;
 	
 	Weapon = CreateDefaultSubobject<USkeletalMeshComponent>("Weapon");
 	Weapon->SetupAttachment(GetMesh(), Aura_Socket::WeaponHandSocket);
 	Weapon->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Weapon->bReceivesDecals = false;
 
 	EffectAttachComponent = CreateDefaultSubobject<USceneComponent>("EffectAttachPoint");
 	EffectAttachComponent->SetupAttachment(GetRootComponent());

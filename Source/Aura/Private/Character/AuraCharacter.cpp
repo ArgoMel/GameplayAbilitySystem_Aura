@@ -56,7 +56,6 @@ void AAuraCharacter::PossessedBy(AController* NewController)
 	Super::PossessedBy(NewController);
 
 	// Init ability actor info for the Server
-	//InitAbilityActorInfo();
 	LoadProgress();
 
 	if (const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this)))
@@ -313,39 +312,30 @@ void AAuraCharacter::Die(const FVector& DeathImpulse)
 
 void AAuraCharacter::LoadProgress() const
 {
-	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (AuraGameMode)
+	const AAuraGameModeBase* AuraGameMode = CastChecked<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
+	if (!SaveData
+		||SaveData->bFirstTimeLoadIn)
 	{
-		ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
-		if (SaveData == nullptr)
-		{
-			InitializeDefaultAttributes();
-			AddCharacterAbilities();
-			return;
-		}
-		if (SaveData->bFirstTimeLoadIn)
-		{
-			InitializeDefaultAttributes();
-			AddCharacterAbilities();
-		}
-		else
-		{
-			if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
-			{
-				AuraASC->AddCharacterAbilitiesFromSaveData(SaveData);
-			}
-			
-			if (AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState()))
-			{
-				AuraPlayerState->SetLevel(SaveData->PlayerLevel);
-				AuraPlayerState->SetXP(SaveData->XP);
-				AuraPlayerState->SetAttributePoints(SaveData->AttributePoints);
-				AuraPlayerState->SetSpellPoints(SaveData->SpellPoints);
-			}
-			
-			UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this, AbilitySystemComponent, SaveData);
-		}
+		InitializeDefaultAttributes();
+		AddCharacterAbilities();
+		return;
 	}
+	
+	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
+	{
+		AuraASC->AddCharacterAbilitiesFromSaveData(SaveData);
+	}
+			
+	if (AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState()))
+	{
+		AuraPlayerState->SetLevel(SaveData->PlayerLevel);
+		AuraPlayerState->SetXP(SaveData->XP);
+		AuraPlayerState->SetAttributePoints(SaveData->AttributePoints);
+		AuraPlayerState->SetSpellPoints(SaveData->SpellPoints);
+	}
+			
+	UAuraAbilitySystemLibrary::InitializeDefaultAttributesFromSaveData(this, AbilitySystemComponent, SaveData);
 }
 
 void AAuraCharacter::MulticastLevelUpParticles_Implementation() const

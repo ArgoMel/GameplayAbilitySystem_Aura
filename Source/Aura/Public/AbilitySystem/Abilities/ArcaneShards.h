@@ -6,9 +6,6 @@
 #include "AbilitySystem/Abilities/AuraDamageGameplayAbility.h"
 #include "ArcaneShards.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class AURA_API UArcaneShards : public UAuraDamageGameplayAbility
 {
