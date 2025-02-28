@@ -35,8 +35,6 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<USphereComponent> Sphere;
-	
-	bool bHit = false;
 
 	UPROPERTY()
 	TObjectPtr<UAudioComponent> LoopingSoundComponent;

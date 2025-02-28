@@ -39,7 +39,11 @@ void AAuraProjectile::BeginPlay()
 	SetReplicateMovement(true);
 	Sphere->OnComponentBeginOverlap.AddDynamic(this, &AAuraProjectile::OnSphereOverlap);
 
-	LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
+	//이렇게 해줘야 클라이언트 쪽에서 소리가 2번 나지 않음
+	if (HasAuthority())
+	{
+		LoopingSoundComponent = UGameplayStatics::SpawnSoundAttached(LoopingSound, GetRootComponent());
+	}
 }
 
 void AAuraProjectile::Destroyed()
@@ -56,7 +60,6 @@ void AAuraProjectile::OnHit()
 {
 	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ImpactEffect, GetActorLocation());
-	bHit = true;
 }
 
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -65,10 +68,7 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		return;
 	}
-	if (!bHit)
-	{
-		OnHit();
-	}
+	OnHit();
 	
 	if (HasAuthority())
 	{
@@ -93,10 +93,6 @@ void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, 
 		}
 		
 		Destroy();
-	}
-	else
-	{
-		bHit = true;
 	}
 }
 

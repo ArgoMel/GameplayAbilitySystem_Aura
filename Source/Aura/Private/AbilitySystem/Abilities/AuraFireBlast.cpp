@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "AbilitySystem/Abilities/AuraFireBlast.h"
 
 #include "AbilitySystem/AuraAbilitySystemLibrary.h"
@@ -22,7 +21,7 @@ FString UAuraFireBlast::GetDescription(int32 Level)
 			// Cooldown
 			"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
 
-			// Number of Fire Balls
+			// Number of fireballs
 			"<Default>Launches %d </>"
 			"<Default>fire balls in all directions, each coming back and </>"
 			"<Default>exploding upon return, causing </>"
@@ -55,7 +54,7 @@ FString UAuraFireBlast::GetNextLevelDescription(int32 Level)
 			// Cooldown
 			"<Small>Cooldown: </><Cooldown>%.1f</>\n\n"
 
-			// Number of Fire Balls
+			// Number of fireballs
 			"<Default>Launches %d </>"
 			"<Default>fire balls in all directions, each coming back and </>"
 			"<Default>exploding upon return, causing </>"
@@ -72,7 +71,7 @@ FString UAuraFireBlast::GetNextLevelDescription(int32 Level)
 			ScaledDamage);
 }
 
-TArray<AAuraFireBall*> UAuraFireBlast::SpawnFireBalls()
+TArray<AAuraFireBall*> UAuraFireBlast::SpawnFireBalls() const
 {
 	TArray<AAuraFireBall*> FireBalls;
 	const FVector Forward = GetAvatarActorFromActorInfo()->GetActorForwardVector();
@@ -93,9 +92,6 @@ TArray<AAuraFireBall*> UAuraFireBlast::SpawnFireBalls()
 			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 		
 		FireBall->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
-		FireBall->ReturnToActor = GetAvatarActorFromActorInfo();
-		FireBall->SetOwner(GetAvatarActorFromActorInfo());
-
 		FireBall->ExplosionDamageParams = MakeDamageEffectParamsFromClassDefaults();
 		FireBall->SetOwner(GetAvatarActorFromActorInfo());
 
