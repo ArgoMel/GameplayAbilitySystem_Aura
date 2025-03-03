@@ -72,8 +72,7 @@ ULoadScreenSaveGame* AAuraGameModeBase::GetSaveSlotData(const FString& SlotName,
 	{
 		SaveGameObject = UGameplayStatics::CreateSaveGameObject(LoadScreenSaveGameClass);
 	}
-	ULoadScreenSaveGame* LoadScreenSaveGame = Cast<ULoadScreenSaveGame>(SaveGameObject);
-	return LoadScreenSaveGame;
+	return CastChecked<ULoadScreenSaveGame>(SaveGameObject);
 }
 
 void AAuraGameModeBase::DeleteSlot(const FString& SlotName, int32 SlotIndex)
@@ -210,9 +209,6 @@ void AAuraGameModeBase::LoadWorldState(UWorld* World) const
 
 void AAuraGameModeBase::TravelToMap(UMVVM_LoadSlot* Slot)
 {
-	//const FString SlotName = Slot->GetLoadSlotName();
-	//const int32 SlotIndex = Slot->SlotIndex;
-
 	UGameplayStatics::OpenLevelBySoftObjectPtr(Slot, Maps.FindChecked(Slot->GetMapName()));
 }
 

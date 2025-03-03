@@ -8,6 +8,7 @@
 #include "LoadScreenSaveGame.generated.h"
 
 class UGameplayAbility;
+
 UENUM(BlueprintType)
 enum ESaveSlotStatus
 {
@@ -78,15 +79,11 @@ inline bool operator==(const FSavedAbility& Left, const FSavedAbility& Right)
 	return Left.AbilityTag.MatchesTagExact(Right.AbilityTag);
 }
 
-/**
- * 
- */
 UCLASS()
 class AURA_API ULoadScreenSaveGame : public USaveGame
 {
 	GENERATED_BODY()
 public:
-	
 	UPROPERTY()
 	FString SlotName = FString();
 
@@ -112,7 +109,6 @@ public:
 	bool bFirstTimeLoadIn = true;
 
 	/* Player */
-
 	UPROPERTY()
 	int32 PlayerLevel = 1;
 
@@ -138,13 +134,13 @@ public:
 	float Vigor = 0;
 	
 	/* Abilities */
-
 	UPROPERTY()
 	TArray<FSavedAbility> SavedAbilities;
 
 	UPROPERTY()
 	TArray<FSavedMap> SavedMaps;
-
+	
+public:
 	FSavedMap GetSavedMapWithMapName(const FString& InMapName);
 	bool HasMap(const FString& InMapName);
 };

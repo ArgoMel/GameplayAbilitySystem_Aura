@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "Game/LoadScreenSaveGame.h"
 
 FSavedMap ULoadScreenSaveGame::GetSavedMapWithMapName(const FString& InMapName)

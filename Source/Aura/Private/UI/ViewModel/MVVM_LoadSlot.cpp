@@ -1,9 +1,8 @@
 // Copyright Druid Mechanics
 
-
 #include "UI/ViewModel/MVVM_LoadSlot.h"
 
-void UMVVM_LoadSlot::InitializeSlot()
+void UMVVM_LoadSlot::InitializeSlot() const
 {
 	const int32 WidgetSwitcherIndex = SlotStatus.GetValue();
 	SetWidgetSwitcherIndex.Broadcast(WidgetSwitcherIndex);

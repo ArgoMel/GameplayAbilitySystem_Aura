@@ -1,6 +1,5 @@
 // Copyright Druid Mechanics
 
-
 #include "UI/ViewModel/MVVM_LoadScreen.h"
 
 #include "Game/AuraGameInstance.h"
@@ -33,7 +32,7 @@ UMVVM_LoadSlot* UMVVM_LoadScreen::GetLoadSlotViewModelByIndex(int32 Index) const
 
 void UMVVM_LoadScreen::NewSlotButtonPressed(int32 Slot, const FString& EnteredName)
 {
-	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
 	if (!IsValid(AuraGameMode))
 	{
 		GEngine->AddOnScreenDebugMessage(1, 15.f, FColor::Magenta, FString("Please switch to Single Player"));
@@ -66,19 +65,12 @@ void UMVVM_LoadScreen::SelectSlotButtonPressed(int32 Slot)
 	SlotSelected.Broadcast();
 	for (const TTuple<int32, UMVVM_LoadSlot*> LoadSlot : LoadSlots)
 	{
-		if (LoadSlot.Key == Slot)
-		{
-			LoadSlot.Value->EnableSelectSlotButton.Broadcast(false);
-		}
-		else
-		{
-			LoadSlot.Value->EnableSelectSlotButton.Broadcast(true);
-		}
+		LoadSlot.Value->EnableSelectSlotButton.Broadcast(LoadSlot.Key != Slot);
 	}
 	SelectedSlot = LoadSlots[Slot];
 }
 
-void UMVVM_LoadScreen::DeleteButtonPressed()
+void UMVVM_LoadScreen::DeleteButtonPressed() const
 {
 	if (IsValid(SelectedSlot))
 	{
@@ -89,7 +81,7 @@ void UMVVM_LoadScreen::DeleteButtonPressed()
 	}
 }
 
-void UMVVM_LoadScreen::PlayButtonPressed()
+void UMVVM_LoadScreen::PlayButtonPressed() const
 {
 	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
 	UAuraGameInstance* AuraGameInstance = Cast<UAuraGameInstance>(AuraGameMode->GetGameInstance());
@@ -105,14 +97,17 @@ void UMVVM_LoadScreen::PlayButtonPressed()
 
 void UMVVM_LoadScreen::LoadData()
 {
-	AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
-	if (!IsValid(AuraGameMode)) return;
+	const AAuraGameModeBase* AuraGameMode = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this));
+	if (!IsValid(AuraGameMode))
+	{
+		return;
+	}
 	for (const TTuple<int32, UMVVM_LoadSlot*> LoadSlot : LoadSlots)
 	{
-		ULoadScreenSaveGame* SaveObject = AuraGameMode->GetSaveSlotData(LoadSlot.Value->GetLoadSlotName(), LoadSlot.Key);
+		const ULoadScreenSaveGame* SaveObject = AuraGameMode->GetSaveSlotData(LoadSlot.Value->GetLoadSlotName(), LoadSlot.Key);
 
 		const FString PlayerName = SaveObject->PlayerName;
-		TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = SaveObject->SaveSlotStatus;
+		const TEnumAsByte<ESaveSlotStatus> SaveSlotStatus = SaveObject->SaveSlotStatus;
 
 		LoadSlot.Value->SlotStatus = SaveSlotStatus;
 		LoadSlot.Value->SetPlayerName(PlayerName);
