@@ -25,23 +25,21 @@ AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 	
 	TArray<AActor*> Actors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), Actors);
-	if (Actors.Num() > 0)
+	for (AActor* Actor : Actors)
 	{
-		AActor* SelectedActor = Actors[0];
-		for (AActor* Actor : Actors)
+		if (APlayerStart* PlayerStart = Cast<APlayerStart>(Actor))
 		{
-			if (APlayerStart* PlayerStart = Cast<APlayerStart>(Actor))
+			if (PlayerStart->PlayerStartTag == AuraGameInstance->PlayerStartTag)
 			{
-				if (PlayerStart->PlayerStartTag == AuraGameInstance->PlayerStartTag)
-				{
-					SelectedActor = PlayerStart;
-					break;
-				}
+				return PlayerStart;
 			}
 		}
-		return SelectedActor;
 	}
-	return nullptr;
+	if (Actors.IsEmpty())
+	{
+		return nullptr;
+	}
+	return Actors[0];
 }
 
 void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex) const
@@ -134,7 +132,10 @@ void AAuraGameModeBase::SaveWorldState(UWorld* World, const FString& Destination
 		{
 			AActor* Actor = *It;
 
-			if (!IsValid(Actor) || !Actor->Implements<USaveInterface>()) continue;
+			if (!IsValid(Actor) || !Actor->Implements<USaveInterface>())
+			{
+				continue;
+			}
 
 			FSavedActor SavedActor;
 			SavedActor.ActorName = Actor->GetFName();
@@ -169,39 +170,43 @@ void AAuraGameModeBase::LoadWorldState(UWorld* World) const
 	UAuraGameInstance* AuraGI = Cast<UAuraGameInstance>(GetGameInstance());
 	check(AuraGI);
 
-	if (UGameplayStatics::DoesSaveGameExist(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex))
+	if (!UGameplayStatics::DoesSaveGameExist(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex))
 	{
-
-		ULoadScreenSaveGame* SaveGame = Cast<ULoadScreenSaveGame>(UGameplayStatics::LoadGameFromSlot(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex));
-		if (SaveGame == nullptr)
-		{
-			UE_LOG(LogAura, Error, TEXT("Failed to load slot"));
-			return;
-		}
+		return;
+	}
+	
+	ULoadScreenSaveGame* SaveGame = Cast<ULoadScreenSaveGame>(UGameplayStatics::LoadGameFromSlot(AuraGI->LoadSlotName, AuraGI->LoadSlotIndex));
+	if (SaveGame == nullptr)
+	{
+		UE_LOG(LogAura, Error, TEXT("Failed to load slot"));
+		return;
+	}
 		
-		for (FActorIterator It(World); It; ++It)
+	for (FActorIterator It(World); It; ++It)
+	{
+		AActor* Actor = *It;
+
+		if (!Actor->Implements<USaveInterface>())
 		{
-			AActor* Actor = *It;
+			continue;
+		}
 
-			if (!Actor->Implements<USaveInterface>()) continue;
-
-			for (FSavedActor SavedActor : SaveGame->GetSavedMapWithMapName(WorldName).SavedActors)
+		for (FSavedActor SavedActor : SaveGame->GetSavedMapWithMapName(WorldName).SavedActors)
+		{
+			if (SavedActor.ActorName == Actor->GetFName())
 			{
-				if (SavedActor.ActorName == Actor->GetFName())
+				if (ISaveInterface::Execute_ShouldLoadTransform(Actor))
 				{
-					if (ISaveInterface::Execute_ShouldLoadTransform(Actor))
-					{
-						Actor->SetActorTransform(SavedActor.Transform);
-					}
-
-					FMemoryReader MemoryReader(SavedActor.Bytes);
-
-					FObjectAndNameAsStringProxyArchive Archive(MemoryReader, true);
-					Archive.ArIsSaveGame = true;
-					Actor->Serialize(Archive); // converts binary bytes back into variables
-
-					ISaveInterface::Execute_LoadActor(Actor);
+					Actor->SetActorTransform(SavedActor.Transform);
 				}
+
+				FMemoryReader MemoryReader(SavedActor.Bytes);
+
+				FObjectAndNameAsStringProxyArchive Archive(MemoryReader, true);
+				Archive.ArIsSaveGame = true;
+				Actor->Serialize(Archive); // converts binary bytes back into variables
+
+				ISaveInterface::Execute_LoadActor(Actor);
 			}
 		}
 	}

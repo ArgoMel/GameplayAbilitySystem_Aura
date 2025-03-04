@@ -240,8 +240,10 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 	if (AuraGameMode)
 	{
 		ULoadScreenSaveGame* SaveData = AuraGameMode->RetrieveInGameSaveData();
-		if (SaveData == nullptr) return;
-
+		if (SaveData == nullptr)
+		{
+			return;
+		}
 		SaveData->PlayerStartTag = CheckpointTag;
 
 		if (const AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(GetPlayerState()))
@@ -258,8 +260,10 @@ void AAuraCharacter::SaveProgress_Implementation(const FName& CheckpointTag)
 
 		SaveData->bFirstTimeLoadIn = false;
 
-		if (!HasAuthority()) return;
-
+		if (!HasAuthority())
+		{
+			return;
+		}
 		UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 		FForEachAbility SaveAbilityDelegate;
 		SaveData->SavedAbilities.Empty();
