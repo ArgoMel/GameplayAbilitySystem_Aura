@@ -36,5 +36,5 @@ public:
 	void UpgradeAttribute(const FGameplayTag& AttributeTag) const;
 
 private:
-	void BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const;
+	void BroadcastAttributeInfo(const FGameplayAttribute& Attribute) const;
 };

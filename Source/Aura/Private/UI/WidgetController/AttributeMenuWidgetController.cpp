@@ -10,14 +10,15 @@
 void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 {
 	check(AttributeInfo);
-	for (auto& Pair : GetAuraAS()->TagsToAttributes)
+	TArray<FGameplayAttribute> AllAttributes;
+	AbilitySystemComponent->GetAllAttributes(AllAttributes);
+	for (auto& Attribute : AllAttributes)
 	{
-		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Pair.Value()).AddLambda(
-		[this, Pair](const FOnAttributeChangeData& Data)
+		AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(Attribute).AddLambda
+		([this, Attribute](const FOnAttributeChangeData& Data)
 		{
-			BroadcastAttributeInfo(Pair.Key, Pair.Value());
-		}
-	);
+			BroadcastAttributeInfo(Attribute);
+		});
 	}
 	
 	GetAuraPS()->OnAttributePointsChangedDelegate.AddLambda(
@@ -30,12 +31,13 @@ void UAttributeMenuWidgetController::BindCallbacksToDependencies()
 
 void UAttributeMenuWidgetController::BroadcastInitialValues()
 {
-	UAuraAttributeSet* AS = CastChecked<UAuraAttributeSet>(AttributeSet);
 	check(AttributeInfo);
 
-	for (auto& Pair : AS->TagsToAttributes)
+	TArray<FGameplayAttribute> AllAttributes;
+	AbilitySystemComponent->GetAllAttributes(AllAttributes);
+	for (auto& Attribute : AllAttributes)
 	{
-		BroadcastAttributeInfo(Pair.Key, Pair.Value());
+		BroadcastAttributeInfo(Attribute);
 	}
 	
 	AttributePointsChangedDelegate.Broadcast(GetAuraPS()->GetAttributePoints());
@@ -47,9 +49,9 @@ void UAttributeMenuWidgetController::UpgradeAttribute(const FGameplayTag& Attrib
 	AuraASC->UpgradeAttribute(AttributeTag);
 }
 
-void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayTag& AttributeTag, const FGameplayAttribute& Attribute) const
+void UAttributeMenuWidgetController::BroadcastAttributeInfo(const FGameplayAttribute& Attribute) const
 {
-	FAuraAttributeInfo Info = AttributeInfo->FindAttributeInfoForTag(AttributeTag);
+	FAuraAttributeInfo Info = AttributeInfo->FindAttributeInfoForName(FText::FromString(Attribute.GetName()));
 	Info.AttributeValue = Attribute.GetNumericValue(AttributeSet);
 	AttributeInfoDelegate.Broadcast(Info);
 }

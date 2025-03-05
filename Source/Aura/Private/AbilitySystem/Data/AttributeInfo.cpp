@@ -29,3 +29,21 @@ FAuraAttributeInfo UAttributeInfo::FindAttributeInfoForTag(const FGameplayTag& A
 
 	return FAuraAttributeInfo();
 }
+
+FAuraAttributeInfo UAttributeInfo::FindAttributeInfoForName(const FText& AttributeName, bool bLogNotFound) const
+{
+	for (const FAuraAttributeInfo& AttributeInfo : AttributeInformation)
+	{
+		if (AttributeInfo.AttributeName.EqualTo(AttributeName))
+		{
+			return AttributeInfo;
+		}
+	}
+    
+	if (bLogNotFound)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AttributeInfo not found for [%s]"), *AttributeName.ToString());
+	}
+ 
+	return FAuraAttributeInfo();
+}

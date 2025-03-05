@@ -1,3 +1,7 @@
+UAuraAttributeSet TagsToAttributes 필요없음 어빌리티 시스템은 생성한 어트리뷰트를 모두 받아오는 기능이 존재
+
+UAttributeInfo 필요없음 태그과련 bfl함수 몇개 만들면 됨
+
 부모 유저위젯 설정할때 위젯 컨트롤러와 부모 오브젝트 설정하는게 좋을듯
 
 AttributeMenu PreContstruct에서 어트리뷰트 개수만큼 자동 생성하게 변경(BFL에서 싱글톤 불러와서 반복문 돌리기)

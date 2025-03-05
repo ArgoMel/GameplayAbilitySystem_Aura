@@ -20,4 +20,6 @@ public:
 	
 public:
 	FAuraAttributeInfo FindAttributeInfoForTag(const FGameplayTag& AttributeTag, bool bLogNotFound = false) const;
+	
+	FAuraAttributeInfo FindAttributeInfoForName(const FText& AttributeName, bool bLogNotFound=false) const;
 };
