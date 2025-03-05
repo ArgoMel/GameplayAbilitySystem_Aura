@@ -1,10 +1,8 @@
 // Copyright Druid Mechanics
 
-
 #include "Actor/AuraEnemySpawnVolume.h"
 
 #include "Actor/AuraEnemySpawnPoint.h"
-#include "Aura/Aura.h"
 #include "Components/BoxComponent.h"
 #include "Interaction/PlayerInterface.h"
 
@@ -24,6 +22,13 @@ void AAuraEnemySpawnVolume::LoadActor_Implementation()
 {
 	if (bReached)
 	{
+		for (AAuraEnemySpawnPoint* Point : SpawnPoints)
+		{
+			if (IsValid(Point))
+			{
+				Point->Destroy();
+			}
+		}
 		Destroy();
 	}
 }
@@ -34,13 +39,14 @@ void AAuraEnemySpawnVolume::BeginPlay()
 	Box->OnComponentBeginOverlap.AddDynamic(this, &AAuraEnemySpawnVolume::OnBoxOverlap);
 }
 
-void AAuraEnemySpawnVolume::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void AAuraEnemySpawnVolume::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!OtherActor->Implements<UPlayerInterface>()) return;
-	
+	if (!OtherActor->Implements<UPlayerInterface>())
+	{
+		return;
+	}
 	bReached = true;
-	for (AAuraEnemySpawnPoint* Point : SpawnPoints)
+	for (const AAuraEnemySpawnPoint* Point : SpawnPoints)
 	{
 		if (IsValid(Point))
 		{

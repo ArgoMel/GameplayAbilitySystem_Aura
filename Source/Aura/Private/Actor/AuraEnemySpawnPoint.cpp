@@ -1,11 +1,10 @@
 // Copyright Druid Mechanics
 
-
 #include "Actor/AuraEnemySpawnPoint.h"
 
 #include "Character/AuraEnemy.h"
 
-void AAuraEnemySpawnPoint::SpawnEnemy()
+void AAuraEnemySpawnPoint::SpawnEnemy() const
 {
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;

@@ -24,18 +24,15 @@ struct FLootItem
 	bool bLootLevelOverride = true;
 };
 
-/**
- * 
- */
 UCLASS()
 class AURA_API ULootTiers : public UDataAsset
 {
 	GENERATED_BODY()
 public:
-
-	UFUNCTION(BlueprintCallable)
-	TArray<FLootItem> GetLootItems();
-	
 	UPROPERTY(EditDefaultsOnly, Category = "LootTiers|Spawning")
 	TArray<FLootItem> LootItems;
+	
+public:
+	UFUNCTION(BlueprintCallable)
+	TArray<FLootItem> GetLootItems();
 };

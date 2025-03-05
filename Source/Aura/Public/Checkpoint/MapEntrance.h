@@ -6,16 +6,14 @@
 #include "Checkpoint/Checkpoint.h"
 #include "MapEntrance.generated.h"
 
-/**
- * 
- */
 UCLASS()
 class AURA_API AMapEntrance : public ACheckpoint
 {
 	GENERATED_BODY()
 public:
-	AMapEntrance(const FObjectInitializer& ObjectInitializer);
-
+	explicit AMapEntrance(const FObjectInitializer& ObjectInitializer);
+	
+public:
 	/* Highlight Interface */
 	virtual void HighlightActor_Implementation() override;
 	/* Highlight Interface */
@@ -23,7 +21,8 @@ public:
 	/* Save Interface */
 	virtual void LoadActor_Implementation() override;
 	/* end Save Interface */
-
+	
+public:
 	UPROPERTY(EditAnywhere)
 	TSoftObjectPtr<UWorld> DestinationMap;
 
@@ -31,9 +30,5 @@ public:
 	FName DestinationPlayerStartTag;
 	
 protected:
-	
-	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
-	                             const FHitResult& SweepResult) override;
-
+	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 };

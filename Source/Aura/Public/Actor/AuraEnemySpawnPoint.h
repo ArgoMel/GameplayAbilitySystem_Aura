@@ -8,18 +8,12 @@
 #include "AuraEnemySpawnPoint.generated.h"
 
 class AAuraEnemy;
-/**
- * 
- */
+
 UCLASS()
 class AURA_API AAuraEnemySpawnPoint : public ATargetPoint
 {
 	GENERATED_BODY()
 public:
-
-	UFUNCTION(BlueprintCallable)
-	void SpawnEnemy();
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enemy Class")
 	TSubclassOf<AAuraEnemy> EnemyClass;
 
@@ -28,4 +22,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Enemy Class")
 	ECharacterClass CharacterClass = ECharacterClass::Warrior;
+	
+public:
+	UFUNCTION(BlueprintCallable)
+	void SpawnEnemy() const;
 };
