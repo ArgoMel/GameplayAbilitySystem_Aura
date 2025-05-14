@@ -155,7 +155,7 @@ void AAuraEnemy::Die(const FVector& DeathImpulse)
 	Super::Die(DeathImpulse);
 }
 
-void AAuraEnemy::SetCombatTarget_Implementation(AActor* InCombatTarget)
+void AAuraEnemy:: SetCombatTarget_Implementation(AActor* InCombatTarget)
 {
 	CombatTarget = InCombatTarget;
 }

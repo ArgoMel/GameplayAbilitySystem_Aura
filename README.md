@@ -22,19 +22,17 @@ GA_ListenForEvent c++로 하면 배열 안만들어도 될듯
 ANIT-AILASING FXAA
 
 DefaultGame : 
-커스텀 FGameplayEffectContext 쓰는경우
-[/Script/GameplayAbilities.AbilitySystemGlobals]
-+AbilitySystemGlobalsClassName="/Script/Aura.AuraAbilitySystemGlobals"
-
 클래스 생성시 저작권 표시
 [/Script/EngineSettings.GeneralProjectSettings]
 ProjectID=70BA0A3B40E2B9899612678C078FC24A
 CopyrightNotice=Copyright Argo
 
-커스텀 FGameplayEffectContext 설정,
-게임플레이 큐 위치 설정(최적화 옵션)
+커스텀 FGameplayEffectContext 쓰는경우
 [/Script/GameplayAbilities.AbilitySystemGlobals]
 +AbilitySystemGlobalsClassName="/Script/Aura.AuraAbilitySystemGlobals"
+
+게임플레이 큐 위치 설정(최적화 옵션)
+[/Script/GameplayAbilities.AbilitySystemGlobals]
 +GameplayCueNotifyPaths=/Game/Blueprints/AbilitySystem/GameplayCueNotifies
 
 DefaultEngine :
