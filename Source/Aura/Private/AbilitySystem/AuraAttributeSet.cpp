@@ -250,7 +250,7 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& Props) const
 	}
 	component.SetAndApplyTargetTagChanges(tagContainer);
 
-	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
+	Effect->SetStackingType(EGameplayEffectStackingType::AggregateBySource);
 	Effect->StackLimitCount = 1;
 	
 	Effect->Modifiers.Add(FGameplayModifierInfo());
