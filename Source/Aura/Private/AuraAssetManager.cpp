@@ -5,6 +5,7 @@
 
 #include "AbilitySystemGlobals.h"
 #include "AuraGameplayTags.h"
+#include "Engine/Engine.h"
 
 UAuraAssetManager& UAuraAssetManager::Get()
 {
