@@ -8,6 +8,7 @@
 #include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "CombatInterface.generated.h"
 
+class USoundBase;
 class UAbilitySystemComponent;
 class UNiagaraSystem;
 class UAnimMontage;
