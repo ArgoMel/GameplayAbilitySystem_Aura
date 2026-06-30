@@ -230,7 +230,7 @@ void UAuraAttributeSet::Debuff(const FEffectProperties& Props) const
 	const float DebuffFrequency = UAuraAbilitySystemLibrary::GetDebuffFrequency(Props.EffectContextHandle);
 
 	const FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *DamageType.ToString());
-	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
+	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackageAsObject(), FName(DebuffName));
 
 	Effect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
 	Effect->Period = DebuffFrequency;
