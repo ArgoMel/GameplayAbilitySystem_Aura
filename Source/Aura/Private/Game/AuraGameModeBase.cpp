@@ -12,12 +12,8 @@
 #include "Serialization/ObjectAndNameAsStringProxyArchive.h"
 #include "UI/ViewModel/MVVM_LoadSlot.h"
 #include "GameFramework/Character.h"
-
-void AAuraGameModeBase::BeginPlay()
-{
-	Super::BeginPlay();
-	Maps.Add(DefaultMapName, DefaultMap);
-}
+#include "Serialization/MemoryReader.h"
+#include "Serialization/MemoryWriter.h"
 
 AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 {
@@ -40,6 +36,12 @@ AActor* AAuraGameModeBase::ChoosePlayerStart_Implementation(AController* Player)
 		return nullptr;
 	}
 	return Actors[0];
+}
+
+void AAuraGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+	Maps.Add(DefaultMapName, DefaultMap);
 }
 
 void AAuraGameModeBase::SaveSlotData(UMVVM_LoadSlot* LoadSlot, int32 SlotIndex) const
