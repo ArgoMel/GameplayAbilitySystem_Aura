@@ -17,13 +17,16 @@ class AURA_API AAuraCharacter : public AAuraCharacterBase, public IPlayerInterfa
 	GENERATED_BODY()
 public:
 	AAuraCharacter();
-protected:
+public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
-	virtual void OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState) override;
 	
 	virtual void OnRep_Stunned() override;
 	virtual void OnRep_Burned() override;
+	
+protected:
+	virtual void OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState) override;
+	
 	virtual void InitAbilityActorInfo() override;
 	
 public:

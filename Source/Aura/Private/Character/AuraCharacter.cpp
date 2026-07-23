@@ -73,15 +73,6 @@ void AAuraCharacter::OnRep_PlayerState()
 	//InitAbilityActorInfo();
 }
 
-void AAuraCharacter::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState)
-{
-	Super::OnPlayerStateChanged(NewPlayerState, OldPlayerState);
-	if (NewPlayerState)
-	{
-		InitAbilityActorInfo();
-	}
-}
-
 void AAuraCharacter::OnRep_Stunned()
 {
 	if (UAuraAbilitySystemComponent* AuraASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent))
@@ -114,6 +105,15 @@ void AAuraCharacter::OnRep_Burned()
 	else
 	{
 		BurnDebuffComponent->Deactivate();
+	}
+}
+
+void AAuraCharacter::OnPlayerStateChanged(APlayerState* NewPlayerState, APlayerState* OldPlayerState)
+{
+	Super::OnPlayerStateChanged(NewPlayerState, OldPlayerState);
+	if (NewPlayerState)
+	{
+		InitAbilityActorInfo();
 	}
 }
 
