@@ -19,10 +19,10 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IEnemyInterface, p
 	GENERATED_BODY()
 public:
 	AAuraEnemy();
-protected:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void BeginPlay() override;
-
+	
+protected:
 	virtual void InitAbilityActorInfo() override;
 	virtual void InitializeDefaultAttributes() const override;
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount) override;
