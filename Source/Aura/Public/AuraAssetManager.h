@@ -13,6 +13,6 @@ class AURA_API UAuraAssetManager : public UAssetManager
 public:
 	static UAuraAssetManager& Get();
 
-protected:
+public:
 	virtual void StartInitialLoading() override;
 };
